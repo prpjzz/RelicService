@@ -1,0 +1,138 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+	<ItemGroup>
+		<Reference Include="Microsoft.EntityFrameworkCore">
+			<HintPath>lib\Microsoft.EntityFrameworkCore.dll</HintPath>
+		</Reference>
+		<Reference Include="Microsoft.EntityFrameworkCore.Abstractions">
+			<HintPath>lib\Microsoft.EntityFrameworkCore.Abstractions.dll</HintPath>
+		</Reference>
+		<Reference Include="Microsoft.EntityFrameworkCore.Relational">
+			<HintPath>lib\Microsoft.EntityFrameworkCore.Relational.dll</HintPath>
+		</Reference>
+		<Reference Include="Microsoft.EntityFrameworkCore.Sqlite">
+			<HintPath>lib\Microsoft.EntityFrameworkCore.Sqlite.dll</HintPath>
+		</Reference>
+		<Reference Include="Microsoft.Extensions.DependencyInjection">
+			<HintPath>lib\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+		</Reference>
+		<Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+			<HintPath>lib\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+		</Reference>
+		<Reference Include="Newtonsoft.Json">
+			<HintPath>lib\Newtonsoft.Json.dll</HintPath>
+		</Reference>
+		<Reference Include="System.Collections" />
+		<Reference Include="System.Collections.Concurrent" />
+		<Reference Include="System.ComponentModel" />
+		<Reference Include="System.ComponentModel.Annotations" />
+		<Reference Include="System.ComponentModel.Primitives" />
+		<Reference Include="System.ComponentModel.TypeConverter" />
+		<Reference Include="System.Diagnostics.Process" />
+		<Reference Include="System.Drawing.Primitives" />
+		<Reference Include="System.Linq" />
+		<Reference Include="System.Linq.Expressions" />
+		<Reference Include="System.Linq.Queryable" />
+		<Reference Include="System.Net.Http" />
+		<Reference Include="System.Runtime" />
+		<Reference Include="System.Runtime.InteropServices" />
+		<Reference Include="System.Threading" />
+		<Reference Include="System.Threading.Tasks.Parallel" />
+		<Reference Include="System.Windows.Forms" />
+		<Reference Include="Vanara.PInvoke.Kernel32">
+			<HintPath>lib\Vanara.PInvoke.Kernel32.dll</HintPath>
+		</Reference>
+		<Reference Include="Vanara.PInvoke.Shared">
+			<HintPath>lib\Vanara.PInvoke.Shared.dll</HintPath>
+		</Reference>
+		<Reference Include="Vanara.PInvoke.User32">
+			<HintPath>lib\Vanara.PInvoke.User32.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Include="Program.cs" />
+		<Compile Include="ApplicationConfiguration.cs" />
+		<Compile Include="View\AboutForm.cs" />
+		<Compile Include="View\AddPresetForm.cs" />
+		<Compile Include="View\AvatarProfileItem.cs" />
+		<Compile Include="View\AvatarRelicInfo.cs" />
+		<Compile Include="View\AvatarSelectionForm.cs" />
+		<Compile Include="View\AvatarTeamItem.cs" />
+		<Compile Include="View\MainForm.cs" />
+		<Compile Include="View\ProfileDetails.cs" />
+		<Compile Include="View\ProfileEditForm.cs" />
+		<Compile Include="Tools\EventManager.cs" />
+		<Compile Include="Tools\Network.cs" />
+		<Compile Include="Tools\ResourceManager.cs" />
+		<Compile Include="Service\ApiService.cs" />
+		<Compile Include="Service\AutoEquipService.cs" />
+		<Compile Include="Service\AvatarService.cs" />
+		<Compile Include="Service\EquipService.cs" />
+		<Compile Include="Service\GameMessageService.cs" />
+		<Compile Include="Service\StatusService.cs" />
+		<Compile Include="Service\Utils.cs" />
+		<Compile Include="Properties\Resources.cs" />
+		<Compile Include="Migrations\InitialCreate.cs" />
+		<Compile Include="Migrations\SqliteContextModelSnapshot.cs" />
+		<Compile Include="Data\VersionInfo.cs" />
+		<Compile Include="Data\Event\EventId.cs" />
+		<Compile Include="Data\Event\FetchProgressEvent.cs" />
+		<Compile Include="Data\Dto\AvatarDataDto.cs" />
+		<Compile Include="Data\Dto\AvatarListDto.cs" />
+		<Compile Include="Data\Dto\RelicAffixDto.cs" />
+		<Compile Include="Data\Dto\RelicDataDto.cs" />
+		<Compile Include="Data\Database\DbAvatar.cs" />
+		<Compile Include="Data\Database\DbRelic.cs" />
+		<Compile Include="Data\Database\DbRelicAffix.cs" />
+		<Compile Include="Data\Database\DbRelicItem.cs" />
+		<Compile Include="Data\Database\DbRelicProfile.cs" />
+		<Compile Include="Data\Database\DbRelicProfileTeamContext.cs" />
+		<Compile Include="Data\Database\DbUserAvatar.cs" />
+		<Compile Include="Data\Database\SqliteContext.cs" />
+		<Compile Include="Data\Config\EquipType.cs" />
+		<Compile Include="Data\Config\FetchType.cs" />
+		<Compile Include="Data\Config\FightPropType.cs" />
+		<Compile Include="AssemblyInfo.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Properties\Resources.resx" />
+		<EmbeddedResource Include="View\AboutForm.resx" />
+		<EmbeddedResource Include="View\AddPresetForm.resx" />
+		<EmbeddedResource Include="View\AvatarProfileItem.resx" />
+		<EmbeddedResource Include="View\AvatarRelicInfo.resx" />
+		<EmbeddedResource Include="View\AvatarSelectionForm.resx" />
+		<EmbeddedResource Include="View\AvatarTeamItem.resx" />
+		<EmbeddedResource Include="View\MainForm.resx" />
+		<EmbeddedResource Include="View\ProfileDetails.resx" />
+		<EmbeddedResource Include="View\ProfileEditForm.resx" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.11" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.11" />
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	  <PackageReference Include="System.Collections" Version="4.3.0" />
+	  <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
+	  <PackageReference Include="System.ComponentModel" Version="4.3.0" />
+	  <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+	  <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
+	  <PackageReference Include="System.ComponentModel.TypeConverter" Version="4.3.0" />
+	  <PackageReference Include="System.Linq" Version="4.3.0" />
+	  <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
+	  <PackageReference Include="System.Linq.Queryable" Version="4.3.0" />
+	  <PackageReference Include="System.Runtime" Version="4.3.1" />
+	  <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
+	  <PackageReference Include="System.Threading" Version="4.3.0" />
+	  <PackageReference Include="System.Threading.Tasks.Parallel" Version="4.3.0" />
+	  <PackageReference Include="Vanara.PInvoke.Kernel32" Version="4.0.4" />
+	  <PackageReference Include="Vanara.PInvoke.Shared" Version="4.0.4" />
+	  <PackageReference Include="Vanara.PInvoke.User32" Version="4.0.4" />
+	</ItemGroup>
+</Project>
