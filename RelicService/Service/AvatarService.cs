@@ -1,9 +1,9 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: RelicService.Service.AvatarService
-// Assembly: RelicService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: EA9BEB7B-7841-4D0A-A232-DCAF9A27085B
-// Assembly location: RelicService.dll inside C:\Users\MBAINT\Downloads\win-x64\RelicService.exe)
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RelicService.Data.Config;
@@ -11,264 +11,295 @@ using RelicService.Data.Database;
 using RelicService.Data.Dto;
 using RelicService.Data.Event;
 using RelicService.Tools;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
-#nullable enable
-namespace RelicService.Service
+namespace RelicService.Service;
+
+internal class AvatarService
 {
-  internal class AvatarService
-  {
-    private readonly CancellationTokenSource _cts = new CancellationTokenSource();
-    private readonly EventManager _eventManager;
-    private readonly Network _network;
-    private readonly StatusService _statusService;
-    private readonly SqliteContext _dbContext;
-    private uint _fetchCurrent;
-    private uint _fetchTotal;
-    private FetchType _fetchType;
-    private readonly object _lock = new object();
+	private readonly CancellationTokenSource _cts = new CancellationTokenSource();
 
-    public bool IsBusy
-    {
-      get
-      {
-        int num = Monitor.TryEnter(this._lock) ? 1 : 0;
-        if (num != 0)
-          Monitor.Exit(this._lock);
-        return num == 0;
-      }
-      private set
-      {
-      }
-    }
+	private readonly EventManager _eventManager;
 
-    public uint FetchCurrent
-    {
-      get => this._fetchCurrent;
-      private set
-      {
-        int num = (int) Interlocked.Exchange(ref this._fetchCurrent, value);
-        this._eventManager.FireEventAsync(EventId.EvtFetchProgress, (object) new FetchProgressEvent(this._fetchType, value, this._fetchTotal));
-      }
-    }
+	private readonly Network _network;
 
-    public uint FetchTotal
-    {
-      get => this._fetchTotal;
-      private set
-      {
-        int num = (int) Interlocked.Exchange(ref this._fetchTotal, value);
-        this._eventManager.FireEventAsync(EventId.EvtFetchProgress, (object) new FetchProgressEvent(this._fetchType, this._fetchCurrent, value));
-      }
-    }
+	private readonly StatusService _statusService;
 
-    public AvatarService(
-      EventManager eventManager,
-      Network network,
-      StatusService statusService,
-      SqliteContext dbContext)
-    {
-      this._eventManager = eventManager;
-      this._network = network;
-      this._statusService = statusService;
-      this._dbContext = dbContext;
-      this._eventManager.OnShutdown += new EventHandler(this.OnShutdown);
-    }
+	private readonly SqliteContext _dbContext;
 
-    public async Task<DbAvatar?> GetAvatarMetadata(uint avatarId)
-    {
-      return await this._dbContext.Avatars.FindAsync((object) avatarId);
-    }
+	private uint _fetchCurrent;
 
-    public async Task<DbUserAvatar?> GetUserAvatarByGuid(ulong avatarGuid)
-    {
-      return await Queryable.Where<DbUserAvatar>((IQueryable<DbUserAvatar>) ((IQueryable<DbUserAvatar>) this._dbContext.UserAvatars).Include<DbUserAvatar, DbAvatar>((Expression<Func<DbUserAvatar, DbAvatar>>) (ua => ua.Avatar)), (Expression<Func<DbUserAvatar, bool>>) (ua => ua.Guid == avatarGuid)).FirstOrDefaultAsync<DbUserAvatar>(this._cts.Token);
-    }
+	private uint _fetchTotal;
 
-    public async Task<List<DbUserAvatar>?> GetUserAvatars(uint uid)
-    {
-      return await Queryable.Where<DbUserAvatar>((IQueryable<DbUserAvatar>) ((IQueryable<DbUserAvatar>) this._dbContext.UserAvatars).Include<DbUserAvatar, DbAvatar>((Expression<Func<DbUserAvatar, DbAvatar>>) (x => x.Avatar)), (Expression<Func<DbUserAvatar, bool>>) (x => x.UserUid == uid)).ToListAsync<DbUserAvatar>(this._cts.Token);
-    }
+	private FetchType _fetchType;
 
-    public async Task<List<DbUserAvatar>?> GetCurrentTeam()
-    {
-      try
-      {
-        AvatarListDto avatarListDto = JsonConvert.DeserializeObject<AvatarListDto>(await this._network.GetCurrentTeamAsync());
-        if (avatarListDto == null || avatarListDto.AvatarGuids == null)
-          return (List<DbUserAvatar>) null;
-        List<DbUserAvatar> dbAvatars = new List<DbUserAvatar>();
-        foreach (ulong avatarGuid in avatarListDto.AvatarGuids)
-        {
-          DbUserAvatar async = await this._dbContext.UserAvatars.FindAsync((object) avatarGuid);
-          if (async != null)
-            dbAvatars.Add(async);
-        }
-        return dbAvatars;
-      }
-      catch (Exception ex)
-      {
-        return (List<DbUserAvatar>) null;
-      }
-    }
+	private readonly object _lock = new object();
 
-    public async Task UpdateTeamFromGame()
-    {
-      try
-      {
-        Monitor.Enter(this._lock);
-        string currentTeamAsync = await this._network.GetCurrentTeamAsync();
-        AvatarListDto avatarListDto = JsonConvert.DeserializeObject<AvatarListDto>(currentTeamAsync);
-        if (avatarListDto == null || avatarListDto.AvatarGuids == null)
-          throw new Exception("failed to deserialize: " + currentTeamAsync);
-        await this.UpdateDataAndResources(avatarListDto.AvatarGuids);
-      }
-      catch (Exception ex)
-      {
-        int num = (int) MessageBox.Show("Error updating team data: " + ex.Message, "Error");
-      }
-      finally
-      {
-        this.FinishFetch();
-        Monitor.Exit(this._lock);
-      }
-    }
+	public bool IsBusy
+	{
+		get
+		{
+			bool num = Monitor.TryEnter(_lock);
+			if (num)
+			{
+				Monitor.Exit(_lock);
+			}
+			return !num;
+		}
+		private set
+		{
+		}
+	}
 
-    public async Task UpdateAllAvatarFromGame()
-    {
-      try
-      {
-        Monitor.Enter(this._lock);
-        string allAvatarsAsync = await this._network.GetAllAvatarsAsync();
-        AvatarListDto avatarListDto = JsonConvert.DeserializeObject<AvatarListDto>(allAvatarsAsync);
-        if (avatarListDto == null || avatarListDto.AvatarGuids == null)
-          throw new Exception("failed to deserialize: " + allAvatarsAsync);
-        await this.UpdateDataAndResources(avatarListDto.AvatarGuids);
-      }
-      catch (Exception ex)
-      {
-        int num = (int) MessageBox.Show("Error updating avatar data: " + ex.Message, "Error");
-      }
-      finally
-      {
-        this.FinishFetch();
-        Monitor.Exit(this._lock);
-      }
-    }
+	public uint FetchCurrent
+	{
+		get
+		{
+			return _fetchCurrent;
+		}
+		private set
+		{
+			Interlocked.Exchange(ref _fetchCurrent, value);
+			_eventManager.FireEventAsync(EventId.EvtFetchProgress, new FetchProgressEvent(_fetchType, value, _fetchTotal));
+		}
+	}
 
-    private async Task UpdateDataAndResources(List<ulong> avatarGuidList)
-    {
-      await this.UpdateAllAvatarData(await this.FetchAvatarDataFromGame(avatarGuidList));
-      int num = await this._dbContext.SaveChangesAsync(this._cts.Token);
-    }
+	public uint FetchTotal
+	{
+		get
+		{
+			return _fetchTotal;
+		}
+		private set
+		{
+			Interlocked.Exchange(ref _fetchTotal, value);
+			_eventManager.FireEventAsync(EventId.EvtFetchProgress, new FetchProgressEvent(_fetchType, _fetchCurrent, value));
+		}
+	}
 
-    private async Task<List<AvatarDataDto>> FetchAvatarDataFromGame(List<ulong> avatarGuidList)
-    {
-      this.ResetFetchState();
-      this._fetchType = FetchType.AvatarMetadata;
-      this.FetchTotal = (uint) avatarGuidList.Count;
-      List<Exception> exceptions = new List<Exception>();
-      List<Task<AvatarDataDto>> tasks = new List<Task<AvatarDataDto>>();
-      avatarGuidList.ForEach((Action<ulong>) (avatarGuid => tasks.Add(this.FetchAvatarDataFromGame(avatarGuid).ContinueWith<AvatarDataDto>((Func<Task<AvatarDataDto>, AvatarDataDto>) (t =>
-      {
-        if (((Task) t).IsFaulted)
-          exceptions.Add((Exception) ((Task) t).Exception);
-        return t.Result;
-      })))));
-      if (exceptions.Count > 0)
-        throw exceptions[0];
-      return Enumerable.ToList<AvatarDataDto>(Enumerable.Select<AvatarDataDto, AvatarDataDto>(Enumerable.Where<AvatarDataDto>((IEnumerable<AvatarDataDto>) await Task.WhenAll<AvatarDataDto>((IEnumerable<Task<AvatarDataDto>>) tasks), (Func<AvatarDataDto, bool>) (x => x != null)), (Func<AvatarDataDto, AvatarDataDto>) (x => x)));
-    }
+	public AvatarService(EventManager eventManager, Network network, StatusService statusService, SqliteContext dbContext)
+	{
+		_eventManager = eventManager;
+		_network = network;
+		_statusService = statusService;
+		_dbContext = dbContext;
+		_eventManager.OnShutdown += OnShutdown;
+	}
 
-    private async Task<AvatarDataDto?> FetchAvatarDataFromGame(ulong avatarGuid)
-    {
-      string avatarInfoAsync = await this._network.GetAvatarInfoAsync(avatarGuid);
-      AvatarDataDto avatarDataDto = JsonConvert.DeserializeObject<AvatarDataDto>(avatarInfoAsync);
-      if (avatarDataDto == null)
-        throw new Exception("failed to deserialize: " + avatarInfoAsync);
-      this.FetchCurrent++;
-      return avatarDataDto;
-    }
+	public async Task<DbAvatar?> GetAvatarMetadata(uint avatarId)
+	{
+		return await _dbContext.Avatars.FindAsync(avatarId);
+	}
 
-    private async Task UpdateAllAvatarData(List<AvatarDataDto> avatarDataList)
-    {
-      this.ResetFetchState();
-      this._fetchType = FetchType.AvatarResource;
-      this.FetchTotal = (uint) avatarDataList.Count;
-      foreach (AvatarDataDto avatarData in avatarDataList)
-      {
-        await this.UpdateAvatarData(avatarData);
-        this.FetchCurrent++;
-      }
-    }
+	public async Task<DbUserAvatar?> GetUserAvatarByGuid(ulong avatarGuid)
+	{
+		return await (from ua in _dbContext.UserAvatars.Include((DbUserAvatar ua) => ua.Avatar)
+			where ua.Guid == avatarGuid
+			select ua).FirstOrDefaultAsync(_cts.Token);
+	}
 
-    private async Task UpdateAvatarData(AvatarDataDto avatarData)
-    {
-      DbAvatar dbAvatar = await this._dbContext.Avatars.FindAsync((object) avatarData.AvatarId);
-      if (dbAvatar == null)
-      {
-        DbAvatar dbAvatar1 = new DbAvatar();
-        dbAvatar1.AvatarId = avatarData.AvatarId;
-        DbAvatar dbAvatar2 = dbAvatar1;
-        dbAvatar2.Name = await this.GetAvatarName(avatarData.NameTextId);
-        dbAvatar1.TextId = avatarData.NameTextId;
-        dbAvatar1.IconName = avatarData.IconName;
-        DbAvatar dbAvatar3 = dbAvatar1;
-        dbAvatar3.IconBase64 = await this.GetAvatarImage(avatarData.IconName);
-        dbAvatar = dbAvatar1;
-        dbAvatar2 = (DbAvatar) null;
-        dbAvatar3 = (DbAvatar) null;
-        dbAvatar1 = (DbAvatar) null;
-        this._dbContext.Avatars.Add(dbAvatar);
-      }
-      else
-        this._dbContext.Avatars.Attach(dbAvatar);
-      await this.UpdateUserAvatarData(dbAvatar, avatarData);
-    }
+	public async Task<List<DbUserAvatar>?> GetUserAvatars(uint uid)
+	{
+		return await (from x in _dbContext.UserAvatars.Include((DbUserAvatar x) => x.Avatar)
+			where x.UserUid == uid
+			select x).ToListAsync(_cts.Token);
+	}
 
-    private async Task UpdateUserAvatarData(DbAvatar dbAvatar, AvatarDataDto avatarData)
-    {
-      uint uid = this._statusService.CurrentUid;
-      if (await this._dbContext.UserAvatars.FindAsync((object) avatarData.Guid) != null)
-        return;
-      this._dbContext.UserAvatars.Add(new DbUserAvatar()
-      {
-        Guid = avatarData.Guid,
-        AvatarId = dbAvatar.AvatarId,
-        UserUid = uid
-      });
-    }
+	public async Task<List<DbUserAvatar>?> GetCurrentTeam()
+	{
+		_ = 1;
+		try
+		{
+			AvatarListDto avatarListDto = JsonConvert.DeserializeObject<AvatarListDto>(await _network.GetCurrentTeamAsync());
+			if (avatarListDto == null || avatarListDto.AvatarGuids == null)
+			{
+				return null;
+			}
+			List<DbUserAvatar> dbAvatars = new List<DbUserAvatar>();
+			foreach (ulong avatarGuid in avatarListDto.AvatarGuids)
+			{
+				DbUserAvatar dbUserAvatar = await _dbContext.UserAvatars.FindAsync(avatarGuid);
+				if (dbUserAvatar != null)
+				{
+					dbAvatars.Add(dbUserAvatar);
+				}
+			}
+			return dbAvatars;
+		}
+		catch (Exception)
+		{
+			return null;
+		}
+	}
 
-    private async Task<string> GetAvatarName(uint nameTextId)
-    {
-      return await this._network.GetTextAsync(nameTextId);
-    }
+	public async Task UpdateTeamFromGame()
+	{
+		_ = 1;
+		try
+		{
+			Monitor.Enter(_lock);
+			string text = await _network.GetCurrentTeamAsync();
+			AvatarListDto avatarListDto = JsonConvert.DeserializeObject<AvatarListDto>(text);
+			if (avatarListDto == null || avatarListDto.AvatarGuids == null)
+			{
+				throw new Exception("failed to deserialize: " + text);
+			}
+			await UpdateDataAndResources(avatarListDto.AvatarGuids);
+		}
+		catch (Exception ex)
+		{
+			MessageBox.Show("Error updating team data: " + ex.Message, "Error");
+		}
+		finally
+		{
+			FinishFetch();
+			Monitor.Exit(_lock);
+		}
+	}
 
-    private async Task<string> GetAvatarImage(string imageName)
-    {
-      return await this._network.GetItemImageAsync(imageName);
-    }
+	public async Task UpdateAllAvatarFromGame()
+	{
+		_ = 1;
+		try
+		{
+			Monitor.Enter(_lock);
+			string text = await _network.GetAllAvatarsAsync();
+			AvatarListDto avatarListDto = JsonConvert.DeserializeObject<AvatarListDto>(text);
+			if (avatarListDto == null || avatarListDto.AvatarGuids == null)
+			{
+				throw new Exception("failed to deserialize: " + text);
+			}
+			await UpdateDataAndResources(avatarListDto.AvatarGuids);
+		}
+		catch (Exception ex)
+		{
+			MessageBox.Show("Error updating avatar data: " + ex.Message, "Error");
+		}
+		finally
+		{
+			FinishFetch();
+			Monitor.Exit(_lock);
+		}
+	}
 
-    private void FinishFetch()
-    {
-      this.ResetFetchState();
-      this._fetchType = FetchType.None;
-      this._eventManager.FireEventAsync(EventId.EvtFetchProgress, (object) new FetchProgressEvent(FetchType.None, 0U, 0U));
-    }
+	private async Task UpdateDataAndResources(List<ulong> avatarGuidList)
+	{
+		await UpdateAllAvatarData(await FetchAvatarDataFromGame(avatarGuidList));
+		await _dbContext.SaveChangesAsync(_cts.Token);
+	}
 
-    private void ResetFetchState()
-    {
-      this._fetchType = FetchType.None;
-      this.FetchCurrent = 0U;
-      this.FetchTotal = 0U;
-    }
+	private async Task<List<AvatarDataDto>> FetchAvatarDataFromGame(List<ulong> avatarGuidList)
+	{
+		ResetFetchState();
+		_fetchType = FetchType.AvatarMetadata;
+		FetchTotal = (uint)avatarGuidList.Count;
+		List<Exception> exceptions = new List<Exception>();
+		List<Task<AvatarDataDto?>> tasks = new List<Task<AvatarDataDto>>();
+		avatarGuidList.ForEach(delegate(ulong avatarGuid)
+		{
+			tasks.Add(FetchAvatarDataFromGame(avatarGuid).ContinueWith(delegate(Task<AvatarDataDto?> t)
+			{
+				if (t.IsFaulted)
+				{
+					exceptions.Add(t.Exception);
+				}
+				return t.Result;
+			}));
+		});
+		if (exceptions.Count > 0)
+		{
+			throw exceptions[0];
+		}
+		return (from x in await Task.WhenAll(tasks)
+			where x != null
+			select (x)).ToList();
+	}
 
-    private void OnShutdown(object? sender, EventArgs e) => this._cts.Cancel();
-  }
+	private async Task<AvatarDataDto?> FetchAvatarDataFromGame(ulong avatarGuid)
+	{
+		string text = await _network.GetAvatarInfoAsync(avatarGuid);
+		AvatarDataDto? result = JsonConvert.DeserializeObject<AvatarDataDto>(text) ?? throw new Exception("failed to deserialize: " + text);
+		FetchCurrent++;
+		return result;
+	}
+
+	private async Task UpdateAllAvatarData(List<AvatarDataDto> avatarDataList)
+	{
+		ResetFetchState();
+		_fetchType = FetchType.AvatarResource;
+		FetchTotal = (uint)avatarDataList.Count;
+		foreach (AvatarDataDto avatarData in avatarDataList)
+		{
+			await UpdateAvatarData(avatarData);
+			FetchCurrent++;
+		}
+	}
+
+	private async Task UpdateAvatarData(AvatarDataDto avatarData)
+	{
+		DbAvatar dbAvatar = await _dbContext.Avatars.FindAsync(avatarData.AvatarId);
+		if (dbAvatar == null)
+		{
+			DbAvatar dbAvatar2 = new DbAvatar
+			{
+				AvatarId = avatarData.AvatarId
+			};
+			DbAvatar dbAvatar3 = dbAvatar2;
+			dbAvatar3.Name = await GetAvatarName(avatarData.NameTextId);
+			dbAvatar2.TextId = avatarData.NameTextId;
+			dbAvatar2.IconName = avatarData.IconName;
+			DbAvatar dbAvatar4 = dbAvatar2;
+			dbAvatar4.IconBase64 = await GetAvatarImage(avatarData.IconName);
+			dbAvatar = dbAvatar2;
+			_dbContext.Avatars.Add(dbAvatar);
+		}
+		else
+		{
+			_dbContext.Avatars.Attach(dbAvatar);
+		}
+		await UpdateUserAvatarData(dbAvatar, avatarData);
+	}
+
+	private async Task UpdateUserAvatarData(DbAvatar dbAvatar, AvatarDataDto avatarData)
+	{
+		uint uid = _statusService.CurrentUid;
+		if (await _dbContext.UserAvatars.FindAsync(avatarData.Guid) == null)
+		{
+			DbUserAvatar entity = new DbUserAvatar
+			{
+				Guid = avatarData.Guid,
+				AvatarId = dbAvatar.AvatarId,
+				UserUid = uid
+			};
+			_dbContext.UserAvatars.Add(entity);
+		}
+	}
+
+	private async Task<string> GetAvatarName(uint nameTextId)
+	{
+		return await _network.GetTextAsync(nameTextId);
+	}
+
+	private async Task<string> GetAvatarImage(string imageName)
+	{
+		return await _network.GetItemImageAsync(imageName);
+	}
+
+	private void FinishFetch()
+	{
+		ResetFetchState();
+		_fetchType = FetchType.None;
+		_eventManager.FireEventAsync(EventId.EvtFetchProgress, new FetchProgressEvent(FetchType.None, 0u, 0u));
+	}
+
+	private void ResetFetchState()
+	{
+		_fetchType = FetchType.None;
+		FetchCurrent = 0u;
+		FetchTotal = 0u;
+	}
+
+	private void OnShutdown(object? sender, EventArgs e)
+	{
+		_cts.Cancel();
+	}
 }

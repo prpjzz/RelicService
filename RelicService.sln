@@ -1,20 +1,31 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35521.163 d17.12
+VisualStudioVersion = 17.12.35521.163
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RelicService", "RelicService\RelicService.csproj", "{F920CD67-F692-4DD7-AE09-53D2E875B871}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RelicService", "RelicService.csproj", "{15D3DBE7-947C-4A76-A947-05361E538088}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F920CD67-F692-4DD7-AE09-53D2E875B871}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F920CD67-F692-4DD7-AE09-53D2E875B871}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F920CD67-F692-4DD7-AE09-53D2E875B871}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F920CD67-F692-4DD7-AE09-53D2E875B871}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15D3DBE7-947C-4A76-A947-05361E538088}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15D3DBE7-947C-4A76-A947-05361E538088}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15D3DBE7-947C-4A76-A947-05361E538088}.Debug|x64.ActiveCfg = Debug|x64
+		{15D3DBE7-947C-4A76-A947-05361E538088}.Debug|x64.Build.0 = Debug|x64
+		{15D3DBE7-947C-4A76-A947-05361E538088}.Debug|x86.ActiveCfg = Debug|x86
+		{15D3DBE7-947C-4A76-A947-05361E538088}.Debug|x86.Build.0 = Debug|x86
+		{15D3DBE7-947C-4A76-A947-05361E538088}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15D3DBE7-947C-4A76-A947-05361E538088}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15D3DBE7-947C-4A76-A947-05361E538088}.Release|x64.ActiveCfg = Release|x64
+		{15D3DBE7-947C-4A76-A947-05361E538088}.Release|x64.Build.0 = Release|x64
+		{15D3DBE7-947C-4A76-A947-05361E538088}.Release|x86.ActiveCfg = Release|x86
+		{15D3DBE7-947C-4A76-A947-05361E538088}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

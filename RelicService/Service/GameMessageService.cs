@@ -1,48 +1,50 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: RelicService.Service.GameMessageService
-// Assembly: RelicService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: EA9BEB7B-7841-4D0A-A232-DCAF9A27085B
-// Assembly location: RelicService.dll inside C:\Users\MBAINT\Downloads\win-x64\RelicService.exe)
-
-using RelicService.Tools;
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+using RelicService.Tools;
 
-#nullable enable
-namespace RelicService.Service
+namespace RelicService.Service;
+
+internal class GameMessageService
 {
-  internal class GameMessageService
-  {
-    private Network _network;
-    private EventManager _eventManager;
-    private ConcurrentQueue<string> _messageQueue = new ConcurrentQueue<string>();
-    private readonly CancellationTokenSource _cts = new CancellationTokenSource();
+	private Network _network;
 
-    public bool Enabled { get; set; } = true;
+	private EventManager _eventManager;
 
-    public GameMessageService(Network network, EventManager eventManager)
-    {
-      this._network = network;
-      this._eventManager = eventManager;
-      this._eventManager.OnShutdown += new EventHandler(this.OnShutdown);
-      Task.Run(new Func<Task>(this.Worker), this._cts.Token);
-    }
+	private ConcurrentQueue<string> _messageQueue = new ConcurrentQueue<string>();
 
-    public void EnqueueMessage(string message) => this._messageQueue.Enqueue(message);
+	private readonly CancellationTokenSource _cts = new CancellationTokenSource();
 
-    private async Task Worker()
-    {
-      while (!this._cts.IsCancellationRequested)
-      {
-        await Task.Delay(200);
-        string message;
-        if (this._messageQueue.TryDequeue(ref message) && this.Enabled)
-          await this._network.ShowMessageAsync(message);
-      }
-    }
+	public bool Enabled { get; set; } = true;
 
-    private void OnShutdown(object? sender, EventArgs e) => this._cts.Cancel();
-  }
+	public GameMessageService(Network network, EventManager eventManager)
+	{
+		_network = network;
+		_eventManager = eventManager;
+		_eventManager.OnShutdown += OnShutdown;
+		Task.Run((Func<Task?>)Worker, _cts.Token);
+	}
+
+	public void EnqueueMessage(string message)
+	{
+		_messageQueue.Enqueue(message);
+	}
+
+	private async Task Worker()
+	{
+		while (!_cts.IsCancellationRequested)
+		{
+			await Task.Delay(200);
+			if (_messageQueue.TryDequeue(out string result) && Enabled)
+			{
+				await _network.ShowMessageAsync(result);
+			}
+		}
+	}
+
+	private void OnShutdown(object? sender, EventArgs e)
+	{
+		_cts.Cancel();
+	}
 }
