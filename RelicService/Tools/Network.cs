@@ -31,6 +31,8 @@ internal class Network
 
 	private static readonly string GET_ITEM_IMAGE = SERVER_URL + "/sprite/image/{0}";
 
+	private static readonly string OPEN_CRAFTING = SERVER_URL + "/ui/crafting";
+
 	private readonly CancellationTokenSource _cts = new CancellationTokenSource();
 
 	private readonly HttpClient _httpClient = new HttpClient();
@@ -106,6 +108,12 @@ internal class Network
 	{
 		string url = string.Format(GET_ITEM_IMAGE, imageName);
 		return await GetRequestAsync(url);
+	}
+
+	public async Task OpenCrafting()
+	{
+		string oPEN_CRAFTING = OPEN_CRAFTING;
+		await PostRequestAsync(oPEN_CRAFTING, string.Empty);
 	}
 
 	private async Task<string> GetRequestAsync(string url)
