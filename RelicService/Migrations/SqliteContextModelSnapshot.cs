@@ -5,7 +5,6 @@ using RelicService.Data.Database;
 
 namespace RelicService.Migrations;
 
-[DbContext(typeof(SqliteContext))]
 internal class SqliteContextModelSnapshot : ModelSnapshot
 {
 	protected override void BuildModel(ModelBuilder modelBuilder)

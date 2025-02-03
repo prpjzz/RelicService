@@ -15,31 +15,31 @@ public class InitialCreate : Migration
 	{
 		migrationBuilder.CreateTable("avatar", (ColumnsBuilder table) => new
 		{
-			id = table.Column<uint>("INTEGER").Annotation("Sqlite:Autoincrement", true),
-			text_id = table.Column<uint>("INTEGER"),
-			name = table.Column<string>("TEXT"),
-			icon_name = table.Column<string>("TEXT"),
-			icon_base64 = table.Column<string>("TEXT")
+			id = table.Column<uint>("INTEGER", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null).Annotation("Sqlite:Autoincrement", true),
+			text_id = table.Column<uint>("INTEGER", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null),
+			name = table.Column<string>("TEXT", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null),
+			icon_name = table.Column<string>("TEXT", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null),
+			icon_base64 = table.Column<string>("TEXT", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null)
 		}, null, table =>
 		{
 			table.PrimaryKey("PK_avatar", x => x.id);
 		});
 		migrationBuilder.CreateTable("relic", (ColumnsBuilder table) => new
 		{
-			id = table.Column<uint>("INTEGER").Annotation("Sqlite:Autoincrement", true),
-			text_id = table.Column<uint>("INTEGER"),
-			name = table.Column<string>("TEXT"),
-			icon_name = table.Column<string>("TEXT"),
-			icon_base64 = table.Column<string>("TEXT")
+			id = table.Column<uint>("INTEGER", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null).Annotation("Sqlite:Autoincrement", true),
+			text_id = table.Column<uint>("INTEGER", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null),
+			name = table.Column<string>("TEXT", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null),
+			icon_name = table.Column<string>("TEXT", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null),
+			icon_base64 = table.Column<string>("TEXT", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null)
 		}, null, table =>
 		{
 			table.PrimaryKey("PK_relic", x => x.id);
 		});
 		migrationBuilder.CreateTable("user_avatar", (ColumnsBuilder table) => new
 		{
-			guid = table.Column<ulong>("INTEGER").Annotation("Sqlite:Autoincrement", true),
-			avatar_id = table.Column<uint>("INTEGER"),
-			user_uid = table.Column<uint>("INTEGER")
+			guid = table.Column<ulong>("INTEGER", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null).Annotation("Sqlite:Autoincrement", true),
+			avatar_id = table.Column<uint>("INTEGER", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null),
+			user_uid = table.Column<uint>("INTEGER", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null)
 		}, null, table =>
 		{
 			table.PrimaryKey("PK_user_avatar", x => x.guid);
@@ -47,14 +47,14 @@ public class InitialCreate : Migration
 		});
 		migrationBuilder.CreateTable("relic_item", (ColumnsBuilder table) => new
 		{
-			guid = table.Column<ulong>("INTEGER").Annotation("Sqlite:Autoincrement", true),
-			level = table.Column<uint>("INTEGER"),
-			main_prop_id = table.Column<uint>("INTEGER"),
-			rank_level = table.Column<uint>("INTEGER"),
-			equip_type = table.Column<string>("TEXT"),
-			main_prop_type = table.Column<string>("TEXT"),
-			main_prop_value = table.Column<float>("REAL"),
-			item_id = table.Column<uint>("INTEGER")
+			guid = table.Column<ulong>("INTEGER", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null).Annotation("Sqlite:Autoincrement", true),
+			level = table.Column<uint>("INTEGER", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null),
+			main_prop_id = table.Column<uint>("INTEGER", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null),
+			rank_level = table.Column<uint>("INTEGER", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null),
+			equip_type = table.Column<string>("TEXT", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null),
+			main_prop_type = table.Column<string>("TEXT", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null),
+			main_prop_value = table.Column<float>("REAL", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null),
+			item_id = table.Column<uint>("INTEGER", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null)
 		}, null, table =>
 		{
 			table.PrimaryKey("PK_relic_item", x => x.guid);
@@ -62,11 +62,11 @@ public class InitialCreate : Migration
 		});
 		migrationBuilder.CreateTable("relic_profile", (ColumnsBuilder table) => new
 		{
-			id = table.Column<int>("INTEGER").Annotation("Sqlite:Autoincrement", true),
-			profile_name = table.Column<string>("TEXT"),
-			avatar_guid = table.Column<ulong>("INTEGER"),
-			auto_equip = table.Column<bool>("INTEGER"),
-			with_scene = table.Column<string>("TEXT")
+			id = table.Column<int>("INTEGER", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null).Annotation("Sqlite:Autoincrement", true),
+			profile_name = table.Column<string>("TEXT", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null),
+			avatar_guid = table.Column<ulong>("INTEGER", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null),
+			auto_equip = table.Column<bool>("INTEGER", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null),
+			with_scene = table.Column<string>("TEXT", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null)
 		}, null, table =>
 		{
 			table.PrimaryKey("PK_relic_profile", x => x.id);
@@ -74,10 +74,10 @@ public class InitialCreate : Migration
 		});
 		migrationBuilder.CreateTable("relic_affix", (ColumnsBuilder table) => new
 		{
-			id = table.Column<int>("INTEGER").Annotation("Sqlite:Autoincrement", true),
-			prop_type = table.Column<string>("TEXT"),
-			prop_value = table.Column<float>("REAL"),
-			relic_guid = table.Column<ulong>("INTEGER")
+			id = table.Column<int>("INTEGER", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null).Annotation("Sqlite:Autoincrement", true),
+			prop_type = table.Column<string>("TEXT", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null),
+			prop_value = table.Column<float>("REAL", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null),
+			relic_guid = table.Column<ulong>("INTEGER", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null)
 		}, null, table =>
 		{
 			table.PrimaryKey("PK_relic_affix", x => x.id);
@@ -85,8 +85,8 @@ public class InitialCreate : Migration
 		});
 		migrationBuilder.CreateTable("relic_profile_item", (ColumnsBuilder table) => new
 		{
-			relic_item_id = table.Column<ulong>("INTEGER"),
-			profile_id = table.Column<int>("INTEGER")
+			relic_item_id = table.Column<ulong>("INTEGER", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null),
+			profile_id = table.Column<int>("INTEGER", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null)
 		}, null, table =>
 		{
 			table.PrimaryKey("PK_relic_profile_item", x => new { x.relic_item_id, x.profile_id });
@@ -95,9 +95,9 @@ public class InitialCreate : Migration
 		});
 		migrationBuilder.CreateTable("relic_profile_team", (ColumnsBuilder table) => new
 		{
-			id = table.Column<int>("INTEGER").Annotation("Sqlite:Autoincrement", true),
-			avatar_ids = table.Column<string>("TEXT"),
-			profile_id = table.Column<int>("INTEGER")
+			id = table.Column<int>("INTEGER", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null).Annotation("Sqlite:Autoincrement", true),
+			avatar_ids = table.Column<string>("TEXT", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null),
+			profile_id = table.Column<int>("INTEGER", null, null, rowVersion: false, null, nullable: false, null, null, null, null, null, null, null, null, null)
 		}, null, table =>
 		{
 			table.PrimaryKey("PK_relic_profile_team", x => x.id);

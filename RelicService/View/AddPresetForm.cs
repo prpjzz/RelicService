@@ -135,7 +135,7 @@ internal class AddPresetForm : Form
 	{
 		SetupBindings();
 		tabControl.Enabled = false;
-		statusLabel.Text = "启动中...";
+		statusLabel.Text = "Starting...";
 	}
 
 	private async void AddPresetForm_Shown(object sender, EventArgs e)
@@ -180,13 +180,13 @@ internal class AddPresetForm : Form
 			bool checked3 = cbActiveWithTeam.Checked;
 			await CreateAndSaveConfig(text, @checked, checked2, text2, checked3);
 			await _dbContext.SaveChangesAsync();
-			MessageBox.Show("保存成功", "Success", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+			MessageBox.Show("Save Success", "Success", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 			Task.Run(async delegate
 			{
 				await Task.Delay(800);
 				Invoke(delegate
 				{
-					statusLabel.Text = "保存成功";
+					statusLabel.Text = "Save Success";
 				});
 				await Task.Delay(2000);
 				Invoke(delegate
@@ -289,7 +289,7 @@ internal class AddPresetForm : Form
 		}
 		else
 		{
-			labelSelectedTeammates.Text = "无";
+			labelSelectedTeammates.Text = "Nothing";
 		}
 	}
 
@@ -324,7 +324,7 @@ internal class AddPresetForm : Form
 			return;
 		}
 		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.Append("正在获取");
+		stringBuilder.Append("Loading Character from Account ");
 		stringBuilder.Append(e.Name);
 		if (e.Total != 0)
 		{
@@ -560,7 +560,7 @@ internal class AddPresetForm : Form
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.Append("[");
 		stringBuilder.Append(relic.Level - 1);
-		stringBuilder.Append("级] ");
+		stringBuilder.Append("Level] ");
 		string value = Utils.FormatFightProp(relic.MainPropType, relic.MainPropValue);
 		stringBuilder.Append(value);
 		stringBuilder.AppendLine();
@@ -653,6 +653,7 @@ internal class AddPresetForm : Form
 
     private void InitializeComponent()
     {
+        ComponentResourceManager resources = new ComponentResourceManager(typeof(AddPresetForm));
         splitContainer = new SplitContainer();
         tabControl = new TabControl();
         tabCurrentTeam = new TabPage();
@@ -898,9 +899,9 @@ internal class AddPresetForm : Form
         cbActiveWithScene.Location = new Point(7, 31);
         cbActiveWithScene.Margin = new Padding(7, 4, 5, 4);
         cbActiveWithScene.Name = "cbActiveWithScene";
-        cbActiveWithScene.Size = new Size(87, 19);
+        cbActiveWithScene.Size = new Size(120, 19);
         cbActiveWithScene.TabIndex = 1;
-        cbActiveWithScene.Text = "按场景激活";
+        cbActiveWithScene.Text = "Active With scene";
         cbActiveWithScene.UseVisualStyleBackColor = true;
         // 
         // labelSceneId
@@ -916,10 +917,10 @@ internal class AddPresetForm : Form
         // tbSceneIds
         // 
         tbSceneIds.Dock = DockStyle.Fill;
-        tbSceneIds.Location = new Point(106, 57);
+        tbSceneIds.Location = new Point(135, 57);
         tbSceneIds.Name = "tbSceneIds";
-        tbSceneIds.PlaceholderText = "例: 3,1016,1056";
-        tbSceneIds.Size = new Size(149, 23);
+        tbSceneIds.PlaceholderText = "Example: 3,1016,1056";
+        tbSceneIds.Size = new Size(120, 23);
         tbSceneIds.TabIndex = 3;
         // 
         // cbActiveWithTeam
@@ -928,9 +929,9 @@ internal class AddPresetForm : Form
         cbActiveWithTeam.Location = new Point(7, 87);
         cbActiveWithTeam.Margin = new Padding(7, 4, 5, 4);
         cbActiveWithTeam.Name = "cbActiveWithTeam";
-        cbActiveWithTeam.Size = new Size(87, 19);
+        cbActiveWithTeam.Size = new Size(118, 19);
         cbActiveWithTeam.TabIndex = 4;
-        cbActiveWithTeam.Text = "按队伍激活";
+        cbActiveWithTeam.Text = "Active With Team";
         cbActiveWithTeam.UseVisualStyleBackColor = true;
         // 
         // labelTeammates
@@ -946,7 +947,7 @@ internal class AddPresetForm : Form
         // labelSelectedTeammates
         // 
         labelSelectedTeammates.AutoSize = true;
-        labelSelectedTeammates.Location = new Point(103, 117);
+        labelSelectedTeammates.Location = new Point(132, 117);
         labelSelectedTeammates.Margin = new Padding(0, 7, 7, 7);
         labelSelectedTeammates.Name = "labelSelectedTeammates";
         labelSelectedTeammates.Size = new Size(51, 15);
@@ -956,10 +957,10 @@ internal class AddPresetForm : Form
         // tbTeammateSearch
         // 
         tbTeammateSearch.Dock = DockStyle.Fill;
-        tbTeammateSearch.Location = new Point(106, 142);
+        tbTeammateSearch.Location = new Point(135, 142);
         tbTeammateSearch.Name = "tbTeammateSearch";
-        tbTeammateSearch.PlaceholderText = "Search for:";
-        tbTeammateSearch.Size = new Size(149, 23);
+        tbTeammateSearch.PlaceholderText = "Search for";
+        tbTeammateSearch.Size = new Size(120, 23);
         tbTeammateSearch.TabIndex = 9;
         tbTeammateSearch.TextChanged += tbTeammateSearch_TextChanged;
         // 
@@ -968,9 +969,9 @@ internal class AddPresetForm : Form
         btnUseCurrentTeam.Dock = DockStyle.Fill;
         btnUseCurrentTeam.Location = new Point(3, 142);
         btnUseCurrentTeam.Name = "btnUseCurrentTeam";
-        btnUseCurrentTeam.Size = new Size(97, 23);
+        btnUseCurrentTeam.Size = new Size(126, 23);
         btnUseCurrentTeam.TabIndex = 10;
-        btnUseCurrentTeam.Text = "Current Team";
+        btnUseCurrentTeam.Text = "Use Current Team";
         btnUseCurrentTeam.UseVisualStyleBackColor = true;
         btnUseCurrentTeam.Click += btnUseCurrentTeam_Click;
         // 
@@ -981,9 +982,9 @@ internal class AddPresetForm : Form
         flpAvatars.BorderStyle = BorderStyle.FixedSingle;
         flpAvatars.Dock = DockStyle.Fill;
         flpAvatars.FlowDirection = FlowDirection.TopDown;
-        flpAvatars.Location = new Point(106, 171);
+        flpAvatars.Location = new Point(135, 171);
         flpAvatars.Name = "flpAvatars";
-        flpAvatars.Size = new Size(149, 123);
+        flpAvatars.Size = new Size(120, 123);
         flpAvatars.TabIndex = 11;
         flpAvatars.WrapContents = false;
         // 
@@ -992,7 +993,7 @@ internal class AddPresetForm : Form
         btnClearSelectedTeam.Dock = DockStyle.Top;
         btnClearSelectedTeam.Location = new Point(3, 171);
         btnClearSelectedTeam.Name = "btnClearSelectedTeam";
-        btnClearSelectedTeam.Size = new Size(97, 23);
+        btnClearSelectedTeam.Size = new Size(126, 23);
         btnClearSelectedTeam.TabIndex = 12;
         btnClearSelectedTeam.Text = "Clear Selection";
         btnClearSelectedTeam.UseVisualStyleBackColor = true;
@@ -1023,8 +1024,8 @@ internal class AddPresetForm : Form
         // statusLabel
         // 
         statusLabel.Name = "statusLabel";
-        statusLabel.Size = new Size(48, 17);
-        statusLabel.Text = "<状态>";
+        statusLabel.Size = new Size(55, 17);
+        statusLabel.Text = "<Status>";
         // 
         // AddPresetForm
         // 
@@ -1034,6 +1035,7 @@ internal class AddPresetForm : Form
         Controls.Add(statusStrip);
         Controls.Add(splitContainer);
         FormBorderStyle = FormBorderStyle.FixedSingle;
+        Icon = (Icon)resources.GetObject("$this.Icon");
         MaximizeBox = false;
         MinimizeBox = false;
         Name = "AddPresetForm";

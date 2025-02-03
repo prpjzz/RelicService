@@ -110,7 +110,7 @@ internal class ProfileEditForm : Form
 			List<uint> avatarIds = source.Select((DbUserAvatar ua) => ua.Avatar.AvatarId).Order().ToList();
 			if (RelicProfile.TeamContexts.Any((DbRelicProfileTeamContext tc) => tc.AvatarIds.Count == avatarIds.Count && tc.AvatarIds.All(avatarIds.Contains)))
 			{
-				MessageBox.Show("队伍已存在", "错误", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+				MessageBox.Show("The team already exists.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
 				return;
 			}
 			DbRelicProfileTeamContext item = new DbRelicProfileTeamContext
@@ -230,6 +230,7 @@ internal class ProfileEditForm : Form
 
     private void InitializeComponent()
     {
+        ComponentResourceManager resources = new ComponentResourceManager(typeof(ProfileEditForm));
         tableLayoutPanel = new TableLayoutPanel();
         labelProfileName = new Label();
         tbProfileName = new TextBox();
@@ -298,9 +299,9 @@ internal class ProfileEditForm : Form
         labelSceneId.Location = new Point(3, 36);
         labelSceneId.Margin = new Padding(3, 7, 3, 3);
         labelSceneId.Name = "labelSceneId";
-        labelSceneId.Size = new Size(38, 15);
+        labelSceneId.Size = new Size(52, 15);
         labelSceneId.TabIndex = 2;
-        labelSceneId.Text = "Scene";
+        labelSceneId.Text = "Scene ID";
         // 
         // tbSceneIds
         // 
@@ -338,9 +339,9 @@ internal class ProfileEditForm : Form
         labelTeam.Location = new Point(3, 65);
         labelTeam.Margin = new Padding(3, 7, 3, 3);
         labelTeam.Name = "labelTeam";
-        labelTeam.Size = new Size(32, 15);
+        labelTeam.Size = new Size(35, 15);
         labelTeam.TabIndex = 4;
-        labelTeam.Text = "队伍";
+        labelTeam.Text = "Team";
         // 
         // btnAddTeam
         // 
@@ -350,7 +351,7 @@ internal class ProfileEditForm : Form
         btnAddTeam.Name = "btnAddTeam";
         btnAddTeam.Size = new Size(203, 23);
         btnAddTeam.TabIndex = 7;
-        btnAddTeam.Text = "添加队伍";
+        btnAddTeam.Text = "Add Team";
         btnAddTeam.UseVisualStyleBackColor = true;
         btnAddTeam.Click += btnAddTeam_Click;
         // 
@@ -387,6 +388,7 @@ internal class ProfileEditForm : Form
         ClientSize = new Size(304, 441);
         Controls.Add(tableLayoutPanel);
         FormBorderStyle = FormBorderStyle.FixedSingle;
+        Icon = (Icon)resources.GetObject("$this.Icon");
         MaximizeBox = false;
         MinimizeBox = false;
         Name = "ProfileEditForm";

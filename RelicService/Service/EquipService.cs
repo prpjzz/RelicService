@@ -101,7 +101,7 @@ internal class EquipService
 		}
 	}
 
-	public async Task<List<RelicDataDto>> UpdateAvatarEquipFromGame(ulong avatarGuid)
+	public async Task<List<RelicDataDto>?> UpdateAvatarEquipFromGame(ulong avatarGuid)
 	{
 		_ = 2;
 		try

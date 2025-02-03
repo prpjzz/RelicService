@@ -8,56 +8,57 @@ namespace RelicService.View;
 
 internal class AboutForm : Form
 {
-    private readonly Network _network;
+	private readonly Network _network;
 
-    private IContainer components;
+	private IContainer components;
 
-    private FlowLayoutPanel flowLayoutPanel;
+	private FlowLayoutPanel flowLayoutPanel;
 
-    private Label label1;
+	private Label label1;
 
-    private LinkLabel linkAuthor;
+	private LinkLabel linkAuthor;
 
-    private LinkLabel linkApi;
+	private LinkLabel linkApi;
 
-    public AboutForm(Network network)
-    {
-        InitializeComponent();
-        _network = network;
-        label1.Text = $"版本: {Program.Build}";
-    }
+	public AboutForm(Network network)
+	{
+		InitializeComponent();
+		_network = network;
+		label1.Text = $"Version: {Program.Build}";
+	}
 
-    private void linkAuthor_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-    {
-        OpenLink("https://space.bilibili.com/44434084");
-    }
+	private void linkAuthor_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+	{
+		OpenLink("https://space.bilibili.com/44434084");
+	}
 
-    private void linkApi_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-    {
-        string swaggerUrl = _network.GetSwaggerUrl();
-        OpenLink(swaggerUrl);
-    }
+	private void linkApi_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+	{
+		string swaggerUrl = _network.GetSwaggerUrl();
+		OpenLink(swaggerUrl);
+	}
 
-    private void OpenLink(string url)
-    {
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = url,
-            UseShellExecute = true
-        });
-    }
+	private void OpenLink(string url)
+	{
+		Process.Start(new ProcessStartInfo
+		{
+			FileName = url,
+			UseShellExecute = true
+		});
+	}
 
-    protected override void Dispose(bool disposing)
-    {
-        if (disposing && components != null)
-        {
-            components.Dispose();
-        }
-        base.Dispose(disposing);
-    }
+	protected override void Dispose(bool disposing)
+	{
+		if (disposing && components != null)
+		{
+			components.Dispose();
+		}
+		base.Dispose(disposing);
+	}
 
     private void InitializeComponent()
     {
+        ComponentResourceManager resources = new ComponentResourceManager(typeof(AboutForm));
         flowLayoutPanel = new FlowLayoutPanel();
         label1 = new Label();
         linkAuthor = new LinkLabel();
@@ -84,10 +85,9 @@ internal class AboutForm : Form
         label1.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
         label1.Location = new Point(13, 10);
         label1.Name = "label1";
-        label1.Size = new Size(95, 20);
+        label1.Size = new Size(60, 20);
         label1.TabIndex = 0;
-        label1.Text = "Relic Service version:";
-        label1.Click += label1_Click;
+        label1.Text = "Version:";
         // 
         // linkAuthor
         // 
@@ -122,6 +122,7 @@ internal class AboutForm : Form
         ClientSize = new Size(214, 101);
         Controls.Add(flowLayoutPanel);
         FormBorderStyle = FormBorderStyle.FixedSingle;
+        Icon = (Icon)resources.GetObject("$this.Icon");
         MaximizeBox = false;
         MinimizeBox = false;
         Name = "AboutForm";
@@ -130,10 +131,5 @@ internal class AboutForm : Form
         flowLayoutPanel.ResumeLayout(false);
         flowLayoutPanel.PerformLayout();
         ResumeLayout(false);
-    }
-
-    private void label1_Click(object sender, System.EventArgs e)
-    {
-
     }
 }

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Target Name="ILRepack" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+<ItemGroup>
+    <InputAssemblies Include="$(OutputPath)\RelicSerivce.dll" />
+    <InputAssemblies Include="$(OutputPath)\fr\Vanara.Core.Resources.dll" />
+    <InputAssemblies Include="$(OutputPath)\Newtonsoft.Json.dll" />
+    <InputAssemblies Include="$(OutputPath)\Microsoft.Data.Sqlite.dll" />
+    <InputAssemblies Include="$(OutputPath)\Microsoft.EntityFrameworkCore.dll" />
+    <InputAssemblies Include="$(OutputPath)\Microsoft.EntityFrameworkCore.Relational.dll" />
+    <InputAssemblies Include="$(OutputPath)\Microsoft.EntityFrameworkCore.Sqlite.dll" />
+	<InputAssemblies Include="$(OutputPath)\Microsoft.EntityFrameworkCore.Abstractions.dll" />
+    <InputAssemblies Include="$(OutputPath)\Microsoft.Extensions.Caching.Abstractions.dll" />
+    <InputAssemblies Include="$(OutputPath)\Microsoft.Extensions.Caching.Memory.dll" />
+    <InputAssemblies Include="$(OutputPath)\Microsoft.Extensions.Configuration.Abstractions.dll" />
+    <InputAssemblies Include="$(OutputPath)\Microsoft.Extensions.DependencyInjection.dll" />
+    <InputAssemblies Include="$(OutputPath)\Microsoft.Extensions.DependencyInjection.Abstractions.dll" />
+    <InputAssemblies Include="$(OutputPath)\Microsoft.Extensions.DependencyModel.dll" />
+    <InputAssemblies Include="$(OutputPath)\Microsoft.Extensions.Logging.Abstractions.dll" />
+    <InputAssemblies Include="$(OutputPath)\Microsoft.Extensions.Options.dll" />
+    <InputAssemblies Include="$(OutputPath)\Microsoft.Extensions.Logging.dll" />
+    <InputAssemblies Include="$(OutputPath)\Microsoft.Extensions.Primitives.dll" />
+    <InputAssemblies Include="$(OutputPath)\RelicService.deps.json" />
+    <InputAssemblies Include="$(OutputPath)\RelicService.runtimeconfig.json" />
+    <InputAssemblies Include="$(OutputPath)\Vanara.Core.dll" />
+    <InputAssemblies Include="$(OutputPath)\Vanara.PInvoke.Gdi32.dll" />
+    <InputAssemblies Include="$(OutputPath)\Vanara.PInvoke.Kernel32.dll" />
+    <InputAssemblies Include="$(OutputPath)\Vanara.PInvoke.User32.dll" />
+    <InputAssemblies Include="$(OutputPath)\Vanara.PInvoke.Shared.dll" />
+    <InputAssemblies Include="$(OutputPath)\SQLitePCLRaw.batteries_v2.dll" />
+    <InputAssemblies Include="$(OutputPath)\SQLitePCLRaw.core.dll" />
+    <InputAssemblies Include="$(OutputPath)\SQLitePCLRaw.provider.e_sqlite3.dll" />
+</ItemGroup>
+<ILRepack
+    Parallel="true"
+    Internalize="true"
+    InputAssemblies="@(InputAssemblies)"
+    TargetKind="Exe"
+    OutputFile="$(OutputPath)\$(AssemblyName).exe"/>
+</Target>
+</Project>

@@ -14,7 +14,7 @@ namespace RelicService;
 
 internal static class Program
 {
-	public static readonly int Build = 10001;
+	public static readonly int Build = 10003;
 
 	public static IServiceProvider ServiceProvider { get; private set; } = CreateServiceProvider();
 

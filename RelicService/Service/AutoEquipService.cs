@@ -123,7 +123,7 @@ internal class AutoEquipService
 				if (ProfileHasConflig(dbRelicProfile, item2))
 				{
 					queue.Clear();
-					string text = $"[自动配置] {dbRelicProfile.UserAvatar.Avatar.Name}->{dbRelicProfile.ProfileName} 与 {item2.UserAvatar.Avatar.Name}->{item2.ProfileName} 配置冲突";
+					string text = $"[Auto Config] {dbRelicProfile.UserAvatar.Avatar.Name}->{dbRelicProfile.ProfileName} and {item2.UserAvatar.Avatar.Name}->{item2.ProfileName} config conflict";
 					_eventManager.FireEventAsync(EventId.EvtProfileConflict, text);
 					_gameMessageService.EnqueueMessage(text);
 					break;
@@ -143,7 +143,7 @@ internal class AutoEquipService
 			{
 				await _equipService.WearEquip(avatarGuid, relicItem.Guid);
 			}
-			_gameMessageService.EnqueueMessage($"[自动配置] 已为 [{avatarName}] 装备 [{profileName}] 预设");
+			_gameMessageService.EnqueueMessage($"[Auto Config] Success equip preset to[{avatarName}] [{profileName}]");
 		}
 	}
 
@@ -167,7 +167,7 @@ internal class AutoEquipService
 				if (ProfileHasConflig(dbRelicProfile2, item))
 				{
 					queue.Clear();
-					string text = $"[自动配置] {dbRelicProfile2.UserAvatar.Avatar.Name}->{dbRelicProfile2.ProfileName} 与 {item.UserAvatar.Avatar.Name}->{item.ProfileName} 配置冲突";
+					string text = $"[Auto Config] Config Conflict between {dbRelicProfile2.UserAvatar.Avatar.Name}->{dbRelicProfile2.ProfileName} and {item.UserAvatar.Avatar.Name}->{item.ProfileName}";
 					_eventManager.FireEventAsync(EventId.EvtProfileConflict, text);
 					_gameMessageService.EnqueueMessage(text);
 					break;
@@ -187,7 +187,7 @@ internal class AutoEquipService
 			{
 				await _equipService.WearEquip(avatarGuid, relicItem.Guid);
 			}
-			_gameMessageService.EnqueueMessage($"[自动配置] 已为 [{avatarName}] 装备 [{profileName}] 预设");
+			_gameMessageService.EnqueueMessage($"[Auto Config] Success equip preset to[{avatarName}] [{profileName}]");
 		}
 	}
 
