@@ -1,85 +1,142 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: RelicService.Data.Database.SqliteContext
-// Assembly: RelicService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: EA9BEB7B-7841-4D0A-A232-DCAF9A27085B
-// Assembly location: RelicService.dll inside C:\Users\MBAINT\Downloads\win-x64\RelicService.exe)
-
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore;
 using RelicService.Data.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
-#nullable enable
 namespace RelicService.Data.Database
 {
-  internal class SqliteContext : DbContext
-  {
-    public DbSet<DbAvatar> Avatars { get; set; }
-
-    public DbSet<DbUserAvatar> UserAvatars { get; set; }
-
-    public DbSet<DbRelic> Relics { get; set; }
-
-    public DbSet<DbRelicItem> RelicItems { get; set; }
-
-    public DbSet<DbRelicAffix> RelicAffixes { get; set; }
-
-    public DbSet<DbRelicProfile> RelicProfiles { get; set; }
-
-    public DbSet<DbRelicProfileTeamContext> RelicProfileTeamContext { get; set; }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    internal class SqliteContext : DbContext
     {
-      modelBuilder.Entity<DbUserAvatar>().HasOne<DbAvatar>((Expression<Func<DbUserAvatar, DbAvatar>>) (p => p.Avatar)).WithMany((string) null).HasForeignKey((Expression<Func<DbUserAvatar, object>>) (p => (object) p.AvatarId)).IsRequired(true);
-      ParameterExpression parameterExpression1;
-      // ISSUE: method reference
-      modelBuilder.Entity<DbRelicItem>().Property<EquipType>((Expression<Func<DbRelicItem, EquipType>>) (p => p.EquipType)).HasConversion<string>(Expression.Lambda<Func<EquipType, string>>((Expression) Expression.Call(v, (MethodInfo) MethodBase.GetMethodFromHandle(__methodref (object.ToString)), Array.Empty<Expression>()), new ParameterExpression[1]
-      {
-        parameterExpression1
-      }), (Expression<Func<string, EquipType>>) (v => (EquipType) Enum.Parse(typeof (EquipType), v)));
-      ParameterExpression parameterExpression2;
-      // ISSUE: method reference
-      modelBuilder.Entity<DbRelicItem>().Property<FightPropType>((Expression<Func<DbRelicItem, FightPropType>>) (p => p.MainPropType)).HasConversion<string>(Expression.Lambda<Func<FightPropType, string>>((Expression) Expression.Call(v, (MethodInfo) MethodBase.GetMethodFromHandle(__methodref (object.ToString)), Array.Empty<Expression>()), new ParameterExpression[1]
-      {
-        parameterExpression2
-      }), (Expression<Func<string, FightPropType>>) (v => (FightPropType) Enum.Parse(typeof (FightPropType), v)));
-      modelBuilder.Entity<DbRelicItem>().HasOne<DbRelic>((Expression<Func<DbRelicItem, DbRelic>>) (p => p.Relic)).WithMany((string) null).HasForeignKey((Expression<Func<DbRelicItem, object>>) (p => (object) p.ItemId)).IsRequired(true);
-      ParameterExpression parameterExpression3;
-      // ISSUE: method reference
-      modelBuilder.Entity<DbRelicAffix>().Property<FightPropType>((Expression<Func<DbRelicAffix, FightPropType>>) (p => p.PropType)).HasConversion<string>(Expression.Lambda<Func<FightPropType, string>>((Expression) Expression.Call(v, (MethodInfo) MethodBase.GetMethodFromHandle(__methodref (object.ToString)), Array.Empty<Expression>()), new ParameterExpression[1]
-      {
-        parameterExpression3
-      }), (Expression<Func<string, FightPropType>>) (v => (FightPropType) Enum.Parse(typeof (FightPropType), v)));
-      modelBuilder.Entity<DbRelicAffix>().HasOne<DbRelicItem>((Expression<Func<DbRelicAffix, DbRelicItem>>) (p => p.Relic)).WithMany((Expression<Func<DbRelicItem, IEnumerable<DbRelicAffix>>>) (p => p.Affixes)).HasForeignKey((Expression<Func<DbRelicAffix, object>>) (p => (object) p.RelicGuid)).IsRequired(true);
-      modelBuilder.Entity<DbRelicItem>().HasMany<DbRelicAffix>((Expression<Func<DbRelicItem, IEnumerable<DbRelicAffix>>>) (p => p.Affixes)).WithOne((Expression<Func<DbRelicAffix, DbRelicItem>>) (p => p.Relic)).HasForeignKey((Expression<Func<DbRelicAffix, object>>) (p => (object) p.RelicGuid)).IsRequired(true);
-      modelBuilder.Entity<DbRelicProfile>().HasMany<DbRelicItem>((Expression<Func<DbRelicProfile, IEnumerable<DbRelicItem>>>) (p => p.RelicItems)).WithMany((string) null).UsingEntity<Dictionary<string, object>>("relic_profile_item", (Func<EntityTypeBuilder<Dictionary<string, object>>, ReferenceCollectionBuilder<DbRelicItem, Dictionary<string, object>>>) (r => r.HasOne<DbRelicItem>().WithMany((string) null).HasForeignKey(new string[1]
-      {
-        "relic_item_id"
-      })), (Func<EntityTypeBuilder<Dictionary<string, object>>, ReferenceCollectionBuilder<DbRelicProfile, Dictionary<string, object>>>) (l => l.HasOne<DbRelicProfile>().WithMany((string) null).HasForeignKey(new string[1]
-      {
-        "profile_id"
-      })), (Action<EntityTypeBuilder<Dictionary<string, object>>>) (r => r.HasKey(new string[2]
-      {
-        "relic_item_id",
-        "profile_id"
-      })));
-      modelBuilder.Entity<DbRelicProfile>().HasOne<DbUserAvatar>((Expression<Func<DbRelicProfile, DbUserAvatar>>) (p => p.UserAvatar)).WithMany((string) null).HasForeignKey((Expression<Func<DbRelicProfile, object>>) (p => (object) p.AvatarGuid)).IsRequired(true);
-      // ISSUE: method reference
-      modelBuilder.Entity<DbRelicProfile>().Property<List<uint>>((Expression<Func<DbRelicProfile, List<uint>>>) (p => p.WithScene)).HasConversion<string>((Expression<Func<List<uint>, string>>) (v => string.Join<uint>(',', v)), (Expression<Func<string, List<uint>>>) (v => Enumerable.ToList<uint>(Enumerable.Select<string, uint>(v.Split(',', (StringSplitOptions) 1), (Func<string, uint>) ((MethodInfo) MethodBase.GetMethodFromHandle(__methodref (uint.Parse))).CreateDelegate(typeof (Func<string, uint>), default (object))))));
-      // ISSUE: method reference
-      modelBuilder.Entity<DbRelicProfileTeamContext>().Property<List<uint>>((Expression<Func<DbRelicProfileTeamContext, List<uint>>>) (p => p.AvatarIds)).HasConversion<string>((Expression<Func<List<uint>, string>>) (v => string.Join<uint>(',', v)), (Expression<Func<string, List<uint>>>) (v => Enumerable.ToList<uint>(Enumerable.Select<string, uint>(v.Split(',', (StringSplitOptions) 1), (Func<string, uint>) ((MethodInfo) MethodBase.GetMethodFromHandle(__methodref (uint.Parse))).CreateDelegate(typeof (Func<string, uint>), default (object))))));
-      modelBuilder.Entity<DbRelicProfile>().HasMany<DbRelicProfileTeamContext>((Expression<Func<DbRelicProfile, IEnumerable<DbRelicProfileTeamContext>>>) (p => p.TeamContexts)).WithOne((Expression<Func<DbRelicProfileTeamContext, DbRelicProfile>>) (p => p.Profile)).HasForeignKey((Expression<Func<DbRelicProfileTeamContext, object>>) (p => (object) p.ProfileId)).IsRequired(true);
-      modelBuilder.Entity<DbUserAvatar>().HasMany<DbRelicProfile>((Expression<Func<DbUserAvatar, IEnumerable<DbRelicProfile>>>) (p => p.RelicProfiles)).WithOne((Expression<Func<DbRelicProfile, DbUserAvatar>>) (p => p.UserAvatar)).HasForeignKey((Expression<Func<DbRelicProfile, object>>) (p => (object) p.AvatarGuid)).IsRequired(true);
-    }
+        public DbSet<DbAvatar> Avatars { get; set; }
+        public DbSet<DbUserAvatar> UserAvatars { get; set; }
+        public DbSet<DbRelic> Relics { get; set; }
+        public DbSet<DbRelicItem> RelicItems { get; set; }
+        public DbSet<DbRelicAffix> RelicAffixes { get; set; }
+        public DbSet<DbRelicProfile> RelicProfiles { get; set; }
+        public DbSet<DbRelicProfileTeamContext> RelicProfileTeamContext { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-      optionsBuilder.UseSqlite("Data Source=RelicService.db");
-      optionsBuilder.EnableSensitiveDataLogging();
+
+        public SqliteContext()
+        {
+
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // each user avatar should reference to its metadata
+            // but the metadata should not reference to the user avatar
+            modelBuilder.Entity<DbUserAvatar>()
+                .HasOne(p => p.Avatar)
+                .WithMany()
+                .HasForeignKey(p => p.AvatarId)
+                .IsRequired();
+
+            // convert enum to string
+            modelBuilder.Entity<DbRelicItem>()
+                .Property(p => p.EquipType)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (EquipType)Enum.Parse(typeof(EquipType), v)
+                );
+
+            // convert enum to string
+            modelBuilder.Entity<DbRelicItem>()
+                .Property(p => p.MainPropType)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (FightPropType)Enum.Parse(typeof(FightPropType), v)
+                );
+
+            // each relic should reference to its metadata
+            // but the metadata should not reference to the relic
+            modelBuilder.Entity<DbRelicItem>()
+                .HasOne(p => p.Relic)
+                .WithMany()
+                .HasForeignKey(p => p.ItemId)
+                .IsRequired();
+
+            // convert enum to string
+            modelBuilder.Entity<DbRelicAffix>()
+                .Property(p => p.PropType)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (FightPropType)Enum.Parse(typeof(FightPropType), v)
+                );
+
+            // each affix should reference to its relic
+            modelBuilder.Entity<DbRelicAffix>()
+                .HasOne(p => p.Relic)
+                .WithMany(p => p.Affixes)
+                .HasForeignKey(p => p.RelicGuid)
+                .IsRequired();
+
+            // each relic should have multiple affixes
+            modelBuilder.Entity<DbRelicItem>()
+                .HasMany(p => p.Affixes)
+                .WithOne(p => p.Relic)
+                .HasForeignKey(p => p.RelicGuid)
+                .IsRequired();
+
+            // each profile have multiple relic item
+            // but relic item should not reference to profile
+            // becase relic item can be shared between profiles
+            modelBuilder.Entity<DbRelicProfile>()
+                .HasMany(p => p.RelicItems)
+                .WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "relic_profile_item",
+                    r => r.HasOne<DbRelicItem>().WithMany().HasForeignKey("relic_item_id"),
+                    l => l.HasOne<DbRelicProfile>().WithMany().HasForeignKey("profile_id"),
+                    r => r.HasKey("relic_item_id", "profile_id")
+                );
+
+            // each profile should reference to its avatar
+            modelBuilder.Entity<DbRelicProfile>()
+                .HasOne(p => p.UserAvatar)
+                .WithMany()
+                .HasForeignKey(p => p.AvatarGuid)
+                .IsRequired();
+
+            // convert list to csv
+            modelBuilder.Entity<DbRelicProfile>()
+                .Property(p => p.WithScene)
+                .HasConversion(
+                    v => string.Join(',', v),
+                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(uint.Parse).ToList()
+                );
+
+            // convert list to csv
+            modelBuilder.Entity<DbRelicProfileTeamContext>()
+                .Property(p => p.AvatarIds)
+                .HasConversion(
+                    v => string.Join(',', v),
+                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(uint.Parse).ToList()
+                );
+
+            // each profile can have multiple team context
+            // but each team context should reference to only one profile
+            modelBuilder.Entity<DbRelicProfile>()
+                .HasMany(p => p.TeamContexts)
+                .WithOne(p => p.Profile)
+                .HasForeignKey(p => p.ProfileId)
+                .IsRequired();
+
+            // each avatar should have multiple profiles
+            modelBuilder.Entity<DbUserAvatar>()
+                .HasMany(p => p.RelicProfiles)
+                .WithOne(p => p.UserAvatar)
+                .HasForeignKey(p => p.AvatarGuid)
+                .IsRequired();
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlite("Data Source=RelicService.db");
+            optionsBuilder.EnableSensitiveDataLogging();
+        }
+
     }
-  }
 }

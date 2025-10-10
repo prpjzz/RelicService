@@ -1,142 +1,149 @@
+﻿using Newtonsoft.Json;
 using System;
-using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
-namespace RelicService.Tools;
-
-internal class Network
+namespace RelicService.Tools
 {
-	private static readonly string SERVER_URL = "http://localhost:27115";
+    internal class Network
+    {
+        static readonly string SERVER_URL = "http://localhost:27115";
+        static readonly string GET_USER_UID = $"{SERVER_URL}/user/uid";
+        static readonly string GET_SCENE_ID = $"{SERVER_URL}/scene/id";
+        static readonly string SHOW_MESSAGE = $"{SERVER_URL}/show-message";
+        static readonly string GET_ALL_AVATARS = $"{SERVER_URL}/team-manager/avatars/all";
+        static readonly string GET_CURRENT_TEAM = $"{SERVER_URL}/team-manager/team/current";
+        static readonly string GET_AVATAR_INFO = $"{SERVER_URL}/avatar/{{0}}";
+        static readonly string GET_AVATAR_RELICS = $"{SERVER_URL}/avatar/{{0}}/relic/current";
+        static readonly string UPDATE_AVATAR_EQUIP = $"{SERVER_URL}/avatar/{{0}}/equip";
+        static readonly string GET_TEXT = $"{SERVER_URL}/textmap/{{0}}";
+        static readonly string GET_ITEM_IMAGE = $"{SERVER_URL}/sprite/image/{{0}}";
+        static readonly string OPEN_CRAFTING = $"{SERVER_URL}/ui/crafting";
 
-	private static readonly string GET_USER_UID = SERVER_URL + "/user/uid";
+        private readonly CancellationTokenSource _cts = new();
+        private readonly HttpClient _httpClient = new();
+        private readonly EventManager _eventManager;
 
-	private static readonly string GET_SCENE_ID = SERVER_URL + "/scene/id";
+        public Network(EventManager eventManager)
+        {
+            _eventManager = eventManager;
+            _eventManager.OnShutdown += OnShutdown;
+        }
 
-	private static readonly string SHOW_MESSAGE = SERVER_URL + "/show-message";
+        public async Task<string?> GetVersionInfo()
+        {
+            var result = await GetRequestAsync("https://rs.ex-m.net/rsclient/version");
+            return result;
+        }
 
-	private static readonly string GET_ALL_AVATARS = SERVER_URL + "/team-manager/avatars/all";
+        public string GetSwaggerUrl()
+        {
+            return $"{SERVER_URL}/swagger/ui";
+        }
 
-	private static readonly string GET_CURRENT_TEAM = SERVER_URL + "/team-manager/team/current";
+        public async Task<string> GetUserUidAsync()
+        {
+            var result = await GetRequestAsync(GET_USER_UID);
+            return result;
+        }
 
-	private static readonly string GET_AVATAR_INFO = SERVER_URL + "/avatar/{0}";
+        public async Task<string> GetSceneIdAsync()
+        {
+            var result = await GetRequestAsync(GET_SCENE_ID);
+            return result;
+        }
 
-	private static readonly string GET_AVATAR_RELICS = SERVER_URL + "/avatar/{0}/relic/current";
+        public async Task ShowMessageAsync(string message)
+        {
+            _ = await PostRequestAsync(SHOW_MESSAGE, message);
+        }
 
-	private static readonly string UPDATE_AVATAR_EQUIP = SERVER_URL + "/avatar/{0}/equip";
+        public async Task<string> GetAllAvatarsAsync()
+        {
+            var result = await GetRequestAsync(GET_ALL_AVATARS);
+            return result;
+        }
 
-	private static readonly string GET_TEXT = SERVER_URL + "/textmap/{0}";
+        public async Task<string> GetCurrentTeamAsync()
+        {
+            var result = await GetRequestAsync(GET_CURRENT_TEAM);
+            return result;
+        }
 
-	private static readonly string GET_ITEM_IMAGE = SERVER_URL + "/sprite/image/{0}";
+        public async Task<string> GetAvatarInfoAsync(ulong guid)
+        {
+            var url = string.Format(GET_AVATAR_INFO, guid);
+            var result = await GetRequestAsync(url);
+            return result;
+        }
 
-	private readonly CancellationTokenSource _cts = new CancellationTokenSource();
+        public async Task<string> GetAvatarRelicsAsync(ulong guid)
+        {
+            var url = string.Format(GET_AVATAR_RELICS, guid);
+            var result = await GetRequestAsync(url);
+            return result;
+        }
 
-	private readonly HttpClient _httpClient = new HttpClient();
+        public async Task UpdateAvatarEquipAsync(ulong avatarGuid, ulong relicGuid)
+        {
+            var url = string.Format(UPDATE_AVATAR_EQUIP, avatarGuid);
+            _ = await PutRequestAsync(url, new { relicGuid = relicGuid });
+        }
 
-	private readonly EventManager _eventManager;
+        public async Task<string> GetTextAsync(uint textId)
+        {
+            var url = string.Format(GET_TEXT, textId);
+            var result = await GetRequestAsync(url);
+            return result;
+        }
 
-	public Network(EventManager eventManager)
-	{
-		_eventManager = eventManager;
-		_eventManager.OnShutdown += OnShutdown;
-	}
+        public async Task<string> GetItemImageAsync(string imageName)
+        {
+            var url = string.Format(GET_ITEM_IMAGE, imageName);
+            var result = await GetRequestAsync(url);
+            return result;
+        }
 
-	public async Task<string?> GetVersionInfo()
-	{
-		return await GetRequestAsync("https://rs.ex-m.net/rsclient/version");
-	}
+        public async Task OpenCrafting()
+        {
+            var url = OPEN_CRAFTING;
+            _ = await PostRequestAsync(url, string.Empty);
+        }
 
-	public string GetSwaggerUrl()
-	{
-		return SERVER_URL + "/swagger/ui";
-	}
+        private async Task<string> GetRequestAsync(string url)
+        {
+            using var content = new StringContent(string.Empty, Encoding.UTF8, "text/plain");
+            using var response = await _httpClient.GetAsync(url, _cts.Token);
+            response.EnsureSuccessStatusCode();
 
-	public async Task<string> GetUserUidAsync()
-	{
-		return await GetRequestAsync(GET_USER_UID);
-	}
+            var responseContent = await response.Content.ReadAsStringAsync();
+            return responseContent;
+        }
 
-	public async Task<string> GetSceneIdAsync()
-	{
-		return await GetRequestAsync(GET_SCENE_ID);
-	}
+        private async Task<string> PostRequestAsync(string url, string plain)
+        {
+            using var content = new StringContent(plain, Encoding.UTF8, "text/plain");
+            using var response = await _httpClient.PostAsync(url, content, _cts.Token);
+            response.EnsureSuccessStatusCode();
 
-	public async Task ShowMessageAsync(string message)
-	{
-		await PostRequestAsync(SHOW_MESSAGE, message);
-	}
+            var responseContent = await response.Content.ReadAsStringAsync();
+            return responseContent;
+        }
 
-	public async Task<string> GetAllAvatarsAsync()
-	{
-		return await GetRequestAsync(GET_ALL_AVATARS);
-	}
+        private async Task<string> PutRequestAsync(string url, object data)
+        {
+            var json = JsonConvert.SerializeObject(data);
+            using var content = new StringContent(json, Encoding.UTF8, "application/json");
+            using var response = await _httpClient.PutAsync(url, content, _cts.Token);
+            response.EnsureSuccessStatusCode();
 
-	public async Task<string> GetCurrentTeamAsync()
-	{
-		return await GetRequestAsync(GET_CURRENT_TEAM);
-	}
+            var responseContent = await response.Content.ReadAsStringAsync();
+            return responseContent;
+        }
 
-	public async Task<string> GetAvatarInfoAsync(ulong guid)
-	{
-		string url = string.Format(GET_AVATAR_INFO, guid);
-		return await GetRequestAsync(url);
-	}
+        private void OnShutdown(object? sender, EventArgs e) => _cts.Cancel();
 
-	public async Task<string> GetAvatarRelicsAsync(ulong guid)
-	{
-		string url = string.Format(GET_AVATAR_RELICS, guid);
-		return await GetRequestAsync(url);
-	}
-
-	public async Task UpdateAvatarEquipAsync(ulong avatarGuid, ulong relicGuid)
-	{
-		string url = string.Format(UPDATE_AVATAR_EQUIP, avatarGuid);
-		await PutRequestAsync(url, new { relicGuid });
-	}
-
-	public async Task<string> GetTextAsync(uint textId)
-	{
-		string url = string.Format(GET_TEXT, textId);
-		return await GetRequestAsync(url);
-	}
-
-	public async Task<string> GetItemImageAsync(string imageName)
-	{
-		string url = string.Format(GET_ITEM_IMAGE, imageName);
-		return await GetRequestAsync(url);
-	}
-
-	private async Task<string> GetRequestAsync(string url)
-	{
-		using (new StringContent(string.Empty, Encoding.UTF8, "text/plain"))
-		{
-			using HttpResponseMessage response = await _httpClient.GetAsync(url, _cts.Token);
-			response.EnsureSuccessStatusCode();
-			return await response.Content.ReadAsStringAsync();
-		}
-	}
-
-	private async Task<string> PostRequestAsync(string url, string plain)
-	{
-		using StringContent content = new StringContent(plain, Encoding.UTF8, "text/plain");
-		using HttpResponseMessage response = await _httpClient.PostAsync(url, content, _cts.Token);
-		response.EnsureSuccessStatusCode();
-		return await response.Content.ReadAsStringAsync();
-	}
-
-	private async Task<string> PutRequestAsync(string url, object data)
-	{
-		string content = JsonConvert.SerializeObject(data);
-		using StringContent content2 = new StringContent(content, Encoding.UTF8, "application/json");
-		using HttpResponseMessage response = await _httpClient.PutAsync(url, content2, _cts.Token);
-		response.EnsureSuccessStatusCode();
-		return await response.Content.ReadAsStringAsync();
-	}
-
-	private void OnShutdown(object? sender, EventArgs e)
-	{
-		_cts.Cancel();
-	}
+    }
 }

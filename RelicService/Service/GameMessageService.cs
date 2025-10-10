@@ -1,50 +1,56 @@
+﻿using RelicService.Tools;
 using System;
 using System.Collections.Concurrent;
-using System.Threading;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using RelicService.Tools;
 
-namespace RelicService.Service;
-
-internal class GameMessageService
+namespace RelicService.Service
 {
-	private Network _network;
+    internal class GameMessageService
+    {
+        private Network _network;
+        private EventManager _eventManager;
 
-	private EventManager _eventManager;
+        private ConcurrentQueue<string> _messageQueue = new();
+        private readonly CancellationTokenSource _cts = new();
 
-	private ConcurrentQueue<string> _messageQueue = new ConcurrentQueue<string>();
+        public bool Enabled { get; set; } = true;
 
-	private readonly CancellationTokenSource _cts = new CancellationTokenSource();
+        public GameMessageService(
+            Network network,
+            EventManager eventManager
+            )
+        {
+            _network = network;
+            _eventManager = eventManager;
 
-	public bool Enabled { get; set; } = true;
+            _eventManager.OnShutdown += OnShutdown;
+            
+            _ = Task.Run(Worker, _cts.Token);
+        }
 
-	public GameMessageService(Network network, EventManager eventManager)
-	{
-		_network = network;
-		_eventManager = eventManager;
-		_eventManager.OnShutdown += OnShutdown;
-		Task.Run((Func<Task?>)Worker, _cts.Token);
-	}
+        public void EnqueueMessage(string message)
+        {
+            _messageQueue.Enqueue(message);
+        }
 
-	public void EnqueueMessage(string message)
-	{
-		_messageQueue.Enqueue(message);
-	}
+        private async Task Worker()
+        {
+            while (!_cts.IsCancellationRequested)
+            {
+                await Task.Delay(200);
+                if (!_messageQueue.TryDequeue(out var message))
+                    continue;
 
-	private async Task Worker()
-	{
-		while (!_cts.IsCancellationRequested)
-		{
-			await Task.Delay(200);
-			if (_messageQueue.TryDequeue(out string result) && Enabled)
-			{
-				await _network.ShowMessageAsync(result);
-			}
-		}
-	}
+                if (Enabled)
+                    await _network.ShowMessageAsync(message);
+            }
 
-	private void OnShutdown(object? sender, EventArgs e)
-	{
-		_cts.Cancel();
-	}
+        }
+
+        private void OnShutdown(object? sender, EventArgs e) => _cts.Cancel();
+
+    }
 }

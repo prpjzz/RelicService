@@ -1,139 +1,51 @@
+﻿using RelicService.Tools;
+using SQLitePCL;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using RelicService.Tools;
 
-namespace RelicService.View;
-
-internal class AboutForm : Form
+namespace RelicService.View
 {
-    private readonly Network _network;
-
-    private IContainer components;
-
-    private FlowLayoutPanel flowLayoutPanel;
-
-    private Label label1;
-
-    private LinkLabel linkAuthor;
-
-    private LinkLabel linkApi;
-
-    public AboutForm(Network network)
+    internal partial class AboutForm : Form
     {
-        InitializeComponent();
-        _network = network;
-        label1.Text = $"版本: {Program.Build}";
-    }
+        private readonly Network _network;
 
-    private void linkAuthor_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-    {
-        OpenLink("https://space.bilibili.com/44434084");
-    }
-
-    private void linkApi_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-    {
-        string swaggerUrl = _network.GetSwaggerUrl();
-        OpenLink(swaggerUrl);
-    }
-
-    private void OpenLink(string url)
-    {
-        Process.Start(new ProcessStartInfo
+        public AboutForm(Network network)
         {
-            FileName = url,
-            UseShellExecute = true
-        });
-    }
+            InitializeComponent();
 
-    protected override void Dispose(bool disposing)
-    {
-        if (disposing && components != null)
-        {
-            components.Dispose();
+            _network = network;
+            label1.Text = $@"版本: {Program.Build}";
         }
-        base.Dispose(disposing);
-    }
 
-    private void InitializeComponent()
-    {
-        flowLayoutPanel = new FlowLayoutPanel();
-        label1 = new Label();
-        linkAuthor = new LinkLabel();
-        linkApi = new LinkLabel();
-        flowLayoutPanel.SuspendLayout();
-        SuspendLayout();
-        // 
-        // flowLayoutPanel
-        // 
-        flowLayoutPanel.Controls.Add(label1);
-        flowLayoutPanel.Controls.Add(linkAuthor);
-        flowLayoutPanel.Controls.Add(linkApi);
-        flowLayoutPanel.Dock = DockStyle.Fill;
-        flowLayoutPanel.FlowDirection = FlowDirection.TopDown;
-        flowLayoutPanel.Location = new Point(0, 0);
-        flowLayoutPanel.Name = "flowLayoutPanel";
-        flowLayoutPanel.Padding = new Padding(10);
-        flowLayoutPanel.Size = new Size(214, 101);
-        flowLayoutPanel.TabIndex = 0;
-        // 
-        // label1
-        // 
-        label1.AutoSize = true;
-        label1.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-        label1.Location = new Point(13, 10);
-        label1.Name = "label1";
-        label1.Size = new Size(95, 20);
-        label1.TabIndex = 0;
-        label1.Text = "Relic Service version:";
-        label1.Click += label1_Click;
-        // 
-        // linkAuthor
-        // 
-        linkAuthor.AutoSize = true;
-        linkAuthor.LinkArea = new LinkArea(4, 8);
-        linkAuthor.Location = new Point(15, 30);
-        linkAuthor.Margin = new Padding(5, 0, 3, 0);
-        linkAuthor.Name = "linkAuthor";
-        linkAuthor.Size = new Size(52, 21);
-        linkAuthor.TabIndex = 1;
-        linkAuthor.TabStop = true;
-        linkAuthor.Text = "by: Ex_M";
-        linkAuthor.UseCompatibleTextRendering = true;
-        linkAuthor.LinkClicked += linkAuthor_LinkClicked;
-        // 
-        // linkApi
-        // 
-        linkApi.AutoSize = true;
-        linkApi.Location = new Point(15, 61);
-        linkApi.Margin = new Padding(5, 10, 3, 0);
-        linkApi.Name = "linkApi";
-        linkApi.Size = new Size(84, 15);
-        linkApi.TabIndex = 2;
-        linkApi.TabStop = true;
-        linkApi.Text = "API Document";
-        linkApi.LinkClicked += linkApi_LinkClicked;
-        // 
-        // AboutForm
-        // 
-        AutoScaleDimensions = new SizeF(7F, 15F);
-        AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(214, 101);
-        Controls.Add(flowLayoutPanel);
-        FormBorderStyle = FormBorderStyle.FixedSingle;
-        MaximizeBox = false;
-        MinimizeBox = false;
-        Name = "AboutForm";
-        StartPosition = FormStartPosition.CenterParent;
-        Text = "About";
-        flowLayoutPanel.ResumeLayout(false);
-        flowLayoutPanel.PerformLayout();
-        ResumeLayout(false);
-    }
+        private void linkAuthor_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            OpenLink("https://space.bilibili.com/44434084");
+        }
 
-    private void label1_Click(object sender, System.EventArgs e)
-    {
+        private void linkApi_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var link = _network.GetSwaggerUrl();
+            OpenLink(link);
+        }
+
+        private void OpenLink(string url)
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = url,
+                UseShellExecute = true
+            };
+
+            Process.Start(psi);
+        }
 
     }
 }

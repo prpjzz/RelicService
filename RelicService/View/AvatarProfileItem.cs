@@ -1,185 +1,87 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Threading;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using RelicService.Properties;
 
-namespace RelicService.View;
-
-public class AvatarProfileItem : UserControl
+namespace RelicService.View
 {
-	private static readonly float WidthToHeightScale = 5f / 18f;
+    public partial class AvatarProfileItem : UserControl
+    {
+        private static readonly float WidthToHeightScale = 0.2777777777777778f;
 
-	private bool _isSelected;
+        private bool _isSelected = false;
+        private ulong _avatarGuid;
+        private Action<ulong>? _onAnyItemClicked;
 
-	private ulong _avatarGuid;
+        private readonly object _lock = new();
 
-	private Action<ulong>? _onAnyItemClicked;
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                _isSelected = value;
+                tableLayoutPanel.BackColor = _isSelected ? SystemColors.ControlDark : SystemColors.Window;
+            }
+        }
 
-	private readonly object _lock = new object();
+        public Image AvatarImage { set => pbAvatar.Image = value; }
+        public string AvatarName { get => labelAvatarName.Text; set => labelAvatarName.Text = value; }
+        public Action<ulong> OnClickCallback { set => _onAnyItemClicked = value; }
 
-	private IContainer components;
+        public AvatarProfileItem() { }
 
-	private TableLayoutPanel tableLayoutPanel;
+        public AvatarProfileItem(ulong avatarGuid)
+        {
+            InitializeComponent();
+            _avatarGuid = avatarGuid;
 
-	private PictureBox pbAvatar;
+            tableLayoutPanel.Controls
+                .OfType<Control>()
+                .ToList()
+                .ForEach(c =>
+                {
+                    c.Click += (sender, e) => _onAnyItemClicked?.Invoke(_avatarGuid);
+                });
 
-	private Label labelAvatarName;
+            tableLayoutPanel.Click += (sender, e) => _onAnyItemClicked?.Invoke(_avatarGuid);
+            Click += (sender, e) => _onAnyItemClicked?.Invoke(_avatarGuid);
 
-	public bool IsSelected
-	{
-		get
-		{
-			return _isSelected;
-		}
-		set
-		{
-			_isSelected = value;
-			tableLayoutPanel.BackColor = (_isSelected ? SystemColors.ControlDark : SystemColors.Window);
-		}
-	}
+            pbAvatar.Image = null;
 
-	public Image AvatarImage
-	{
-		set
-		{
-			pbAvatar.Image = value;
-		}
-	}
+            var size = Size;
+            Size = size with { Height = (int)(size.Width * WidthToHeightScale) };
+        }
 
-	public string AvatarName
-	{
-		get
-		{
-			return labelAvatarName.Text;
-		}
-		set
-		{
-			labelAvatarName.Text = value;
-		}
-	}
+        private void pbAvatar_Resize(object sender, EventArgs e)
+        {
+            bool lockTaken = false;
+            try
+            {
+                Monitor.TryEnter(_lock, ref lockTaken);
+                if (!lockTaken)
+                    return;
 
-	public Action<ulong> OnClickCallback
-	{
-		set
-		{
-			_onAnyItemClicked = value;
-		}
-	}
+                var pb = (PictureBox)sender;
+                pb.Size = pb.Size with { Height = pb.Size.Width };
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            finally
+            {
+                if (lockTaken)
+                    Monitor.Exit(_lock);
+            }
 
-	public AvatarProfileItem()
-	{
-	}
+        }
 
-	public AvatarProfileItem(ulong avatarGuid)
-	{
-		InitializeComponent();
-		_avatarGuid = avatarGuid;
-		tableLayoutPanel.Controls.OfType<Control>().ToList().ForEach(delegate(Control c)
-		{
-			c.Click += delegate
-			{
-				_onAnyItemClicked?.Invoke(_avatarGuid);
-			};
-		});
-		tableLayoutPanel.Click += delegate
-		{
-			_onAnyItemClicked?.Invoke(_avatarGuid);
-		};
-		base.Click += delegate
-		{
-			_onAnyItemClicked?.Invoke(_avatarGuid);
-		};
-		pbAvatar.Image = null;
-		Size size = base.Size;
-		Size size2 = size;
-		size2.Height = (int)((float)size.Width * WidthToHeightScale);
-		base.Size = size2;
-	}
-
-	private void pbAvatar_Resize(object sender, EventArgs e)
-	{
-		bool lockTaken = false;
-		try
-		{
-			Monitor.TryEnter(_lock, ref lockTaken);
-			if (lockTaken)
-			{
-				PictureBox pictureBox = (PictureBox)sender;
-				Size size = pictureBox.Size;
-				size.Height = pictureBox.Size.Width;
-				pictureBox.Size = size;
-			}
-		}
-		catch (Exception)
-		{
-		}
-		finally
-		{
-			if (lockTaken)
-			{
-				Monitor.Exit(_lock);
-			}
-		}
-	}
-
-	protected override void Dispose(bool disposing)
-	{
-		if (disposing && components != null)
-		{
-			components.Dispose();
-		}
-		base.Dispose(disposing);
-	}
-
-	private void InitializeComponent()
-	{
-		this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-		this.pbAvatar = new System.Windows.Forms.PictureBox();
-		this.labelAvatarName = new System.Windows.Forms.Label();
-		this.tableLayoutPanel.SuspendLayout();
-		((System.ComponentModel.ISupportInitialize)this.pbAvatar).BeginInit();
-		base.SuspendLayout();
-		this.tableLayoutPanel.ColumnCount = 2;
-		this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 28f));
-		this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 72f));
-		this.tableLayoutPanel.Controls.Add(this.pbAvatar, 0, 0);
-		this.tableLayoutPanel.Controls.Add(this.labelAvatarName, 1, 0);
-		this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-		this.tableLayoutPanel.Location = new System.Drawing.Point(0, 0);
-		this.tableLayoutPanel.Name = "tableLayoutPanel";
-		this.tableLayoutPanel.RowCount = 1;
-		this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100f));
-		this.tableLayoutPanel.Size = new System.Drawing.Size(270, 75);
-		this.tableLayoutPanel.TabIndex = 0;
-		this.pbAvatar.Dock = System.Windows.Forms.DockStyle.Fill;
-		this.pbAvatar.Image = RelicService.Properties.Resources.dot_green;
-		this.pbAvatar.Location = new System.Drawing.Point(5, 5);
-		this.pbAvatar.Margin = new System.Windows.Forms.Padding(5);
-		this.pbAvatar.Name = "pbAvatar";
-		this.pbAvatar.Size = new System.Drawing.Size(65, 65);
-		this.pbAvatar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-		this.pbAvatar.TabIndex = 0;
-		this.pbAvatar.TabStop = false;
-		this.pbAvatar.Resize += new System.EventHandler(pbAvatar_Resize);
-		this.labelAvatarName.Dock = System.Windows.Forms.DockStyle.Fill;
-		this.labelAvatarName.Font = new System.Drawing.Font("Segoe UI", 14.25f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-		this.labelAvatarName.Location = new System.Drawing.Point(78, 0);
-		this.labelAvatarName.Name = "labelAvatarName";
-		this.labelAvatarName.Padding = new System.Windows.Forms.Padding(40, 0, 0, 0);
-		this.labelAvatarName.Size = new System.Drawing.Size(189, 75);
-		this.labelAvatarName.TabIndex = 1;
-		this.labelAvatarName.Text = "label1";
-		this.labelAvatarName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-		base.AutoScaleDimensions = new System.Drawing.SizeF(7f, 15f);
-		base.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-		base.Controls.Add(this.tableLayoutPanel);
-		base.Name = "AvatarProfileItem";
-		base.Size = new System.Drawing.Size(270, 75);
-		this.tableLayoutPanel.ResumeLayout(false);
-		((System.ComponentModel.ISupportInitialize)this.pbAvatar).EndInit();
-		base.ResumeLayout(false);
-	}
+    }
 }

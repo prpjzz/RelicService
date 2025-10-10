@@ -1,128 +1,126 @@
+﻿using RelicService.Tools;
 using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using RelicService.Data.Event;
-using RelicService.Tools;
 
-namespace RelicService.Service;
-
-internal class StatusService
+namespace RelicService.Service
 {
-	private readonly CancellationTokenSource _cts = new CancellationTokenSource();
+    internal class StatusService
+    {
+        private readonly CancellationTokenSource _cts = new();
+        private bool _isServiceOnline = false;
+        private uint _lastUid = 0;
+        private uint _lastSceneId = 0;
+        private List<ulong> _lastActiveTeam = new();
 
-	private bool _isServiceOnline;
+        EventManager _eventManager;
+        Network _network;
 
-	private uint _lastUid;
+        public bool IsServiceOnline { 
+            get { return _isServiceOnline;  } 
+            private set
+            {
+                if (_isServiceOnline != value)
+                {
+                    _isServiceOnline = value;
+                    _eventManager.FireEventAsync(EventId.EvtServiceStatusChanged, value);
+                }
+            }
+        }
 
-	private uint _lastSceneId;
+        public bool IsServiceOffline => !IsServiceOnline;
 
-	private List<ulong> _lastActiveTeam = new List<ulong>();
+        public uint CurrentUid { 
+            get { return _lastUid; }
+            private set
+            {
+                if (_lastUid != value)
+                {
+                    _lastUid = value;
+                    _eventManager.FireEventAsync(EventId.EvtUidChanged, value);
+                }
+            }
+        }
+        public uint CurrentSceneId { 
+            get { return _lastSceneId; }
+            private set
+            {
+                if (_lastSceneId != value)
+                {
+                    _lastSceneId = value;
+                    _eventManager.FireEventAsync(EventId.EvtSceneIdChanged, value);
+                }
+            }
+        }
 
-	private EventManager _eventManager;
+        public StatusService(EventManager eventManager, Network network)
+        {
+            _eventManager = eventManager;
+            _network = network;
 
-	private Network _network;
+            _eventManager.OnShutdown += OnShutdown;
 
-	public bool IsServiceOnline
-	{
-		get
-		{
-			return _isServiceOnline;
-		}
-		private set
-		{
-			if (_isServiceOnline != value)
-			{
-				_isServiceOnline = value;
-				_eventManager.FireEventAsync(EventId.EvtServiceStatusChanged, value);
-			}
-		}
-	}
+            _ = Task.Run(StatusPoll, _cts.Token);
+        }
 
-	public bool IsServiceOffline => !IsServiceOnline;
 
-	public uint CurrentUid
-	{
-		get
-		{
-			return _lastUid;
-		}
-		private set
-		{
-			if (_lastUid != value)
-			{
-				_lastUid = value;
-				_eventManager.FireEventAsync(EventId.EvtUidChanged, value);
-			}
-		}
-	}
+        private async Task StatusPoll()
+        {
+            
+            while (!_cts.Token.IsCancellationRequested)
+            {
 
-	public uint CurrentSceneId
-	{
-		get
-		{
-			return _lastSceneId;
-		}
-		private set
-		{
-			if (_lastSceneId != value)
-			{
-				_lastSceneId = value;
-				_eventManager.FireEventAsync(EventId.EvtSceneIdChanged, value);
-			}
-		}
-	}
+                IsServiceOnline = await IsServiceAvailable();
+                if (IsServiceOnline)
+                    await UpdateStatus();
 
-	public StatusService(EventManager eventManager, Network network)
-	{
-		_eventManager = eventManager;
-		_network = network;
-		_eventManager.OnShutdown += OnShutdown;
-		Task.Run((Func<Task?>)StatusPoll, _cts.Token);
-	}
+                await Task.Delay(2000, _cts.Token);
+            }
 
-	private async Task StatusPoll()
-	{
-		while (!_cts.Token.IsCancellationRequested)
-		{
-			IsServiceOnline = await IsServiceAvailable();
-			if (IsServiceOnline)
-			{
-				await UpdateStatus();
-			}
-			await Task.Delay(2000, _cts.Token);
-		}
-	}
+        }
 
-	public async Task<bool> IsServiceAvailable()
-	{
-		try
-		{
-			await _network.GetUserUidAsync();
-		}
-		catch (Exception)
-		{
-			return false;
-		}
-		return true;
-	}
+        public async Task<bool> IsServiceAvailable()
+        {
+            try
+            {
+                _ = await _network.GetUserUidAsync();
+            } 
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+                return false;
+            }
 
-	private async Task UpdateStatus()
-	{
-		_ = 1;
-		try
-		{
-			CurrentSceneId = uint.Parse(await _network.GetSceneIdAsync());
-			uint currentUid = uint.Parse(await _network.GetUserUidAsync());
-			CurrentUid = currentUid;
-		}
-		catch (Exception)
-		{
-		}
-	}
+            return true;
+        }
 
-	private void OnShutdown(object? sender, EventArgs e)
-	{
-		_cts.Cancel();
-	}
+        private async Task UpdateStatus()
+        {
+            try
+            {
+                var sceneId = await _network.GetSceneIdAsync();
+                CurrentSceneId = uint.Parse(sceneId);
+
+                var uidStr = await _network.GetUserUidAsync();
+                var uid = uint.Parse(uidStr);
+                CurrentUid = uid;
+
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }
+        }
+
+        private void OnShutdown(object? sender, EventArgs e)
+        {
+            _cts.Cancel();
+        }
+
+    }
+
 }

@@ -1,32 +1,32 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: RelicService.Data.Database.DbRelic
-// Assembly: RelicService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: EA9BEB7B-7841-4D0A-A232-DCAF9A27085B
-// Assembly location: RelicService.dll inside C:\Users\MBAINT\Downloads\win-x64\RelicService.exe)
-
+﻿using RelicService.Data.Config;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-#nullable enable
 namespace RelicService.Data.Database
 {
-  [Table("relic")]
-  internal class DbRelic
-  {
-    [Key]
-    [Column("id")]
-    public uint ItemId { get; set; }
+    [Table("relic")]
+    internal class DbRelic
+    {
+        [Key]
+        [Column("id")]
+        public uint ItemId { get; set; }
 
-    [Column("text_id")]
-    public uint TextId { get; set; }
+        [Column("text_id")]
+        public uint TextId { get; set; }
 
-    [Column("name")]
-    public string Name { get; set; } = string.Empty;
+        [Column("name")]
+        public string Name { get; set; } = string.Empty;
 
-    [Column("icon_name")]
-    public string IconName { get; set; } = string.Empty;
+        [Column("icon_name")]
+        public string IconName { get; set; } = string.Empty;
 
-    [Column("icon_base64")]
-    public string IconBase64 { get; set; } = string.Empty;
-  }
+        [Column("icon_base64")]
+        public string IconBase64 { get; set; } = string.Empty;
+
+    }
 }

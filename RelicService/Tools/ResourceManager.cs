@@ -1,88 +1,112 @@
+﻿using RelicService.Data.Database;
 using System;
 using System.Collections.Concurrent;
-using System.Drawing;
-using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using RelicService.Data.Database;
 
-namespace RelicService.Tools;
-
-internal class ResourceManager(SqliteContext dbContext)
+namespace RelicService.Tools
 {
-	private class ImageEntry(Image image)
-	{
-		public Image Image { get; } = image;
+    internal class ResourceManager(SqliteContext dbContext)
+    {
+        private class ImageEntry(Image image)
+        {
+            public Image Image { get; } = image;
+            public int RefCount { get; set; } = 1; // Starts with one reference when created
+        }
 
-		public int RefCount { get; set; } = 1;
-	}
+        private ConcurrentDictionary<uint, ImageEntry> _avatarImageMap = new();
+        private ConcurrentDictionary<uint, ImageEntry> _relicImageMap = new();
 
-	private ConcurrentDictionary<uint, ImageEntry> _avatarImageMap = new ConcurrentDictionary<uint, ImageEntry>();
+        public async Task<Image?> GetAvatarImage(uint avatarId)
+        {
+            if (_avatarImageMap.TryGetValue(avatarId, out var entry))
+            {
+                entry.RefCount++; // Increment reference count
+                return entry.Image;
+            }
 
-	private ConcurrentDictionary<uint, ImageEntry> _relicImageMap = new ConcurrentDictionary<uint, ImageEntry>();
+            var avatar = await dbContext.Avatars.FindAsync(avatarId);
+            if (avatar == null)
+            {
+                return null;
+            }
 
-	public async Task<Image?> GetAvatarImage(uint avatarId)
-	{
-		if (_avatarImageMap.TryGetValue(avatarId, out ImageEntry value))
-		{
-			value.RefCount++;
-			return value.Image;
-		}
-		DbAvatar dbAvatar = await dbContext.Avatars.FindAsync(avatarId);
-		if (dbAvatar == null)
-		{
-			return null;
-		}
-		using MemoryStream stream = new MemoryStream(Convert.FromBase64String(dbAvatar.IconBase64));
-		Image image = Image.FromStream(stream);
-		image.RotateFlip(RotateFlipType.Rotate180FlipNone);
-		image.RotateFlip(RotateFlipType.RotateNoneFlipX);
-		ImageEntry value2 = new ImageEntry(image);
-		_avatarImageMap.TryAdd(avatarId, value2);
-		return image;
-	}
+            var imageBase64 = avatar.IconBase64;
+            var imageBytes = Convert.FromBase64String(imageBase64);
+            using var ms = new MemoryStream(imageBytes);
+            var image = Image.FromStream(ms);
+            image.RotateFlip(RotateFlipType.Rotate180FlipNone);
+            image.RotateFlip(RotateFlipType.RotateNoneFlipX);
 
-	public async Task<Image?> GetRelicImage(uint relicId)
-	{
-		if (_relicImageMap.TryGetValue(relicId, out ImageEntry value))
-		{
-			value.RefCount++;
-			return value.Image;
-		}
-		DbRelic dbRelic = await dbContext.Relics.FindAsync(relicId);
-		if (dbRelic == null)
-		{
-			return null;
-		}
-		using MemoryStream stream = new MemoryStream(Convert.FromBase64String(dbRelic.IconBase64));
-		Image image = Image.FromStream(stream);
-		image.RotateFlip(RotateFlipType.Rotate180FlipNone);
-		image.RotateFlip(RotateFlipType.RotateNoneFlipX);
-		ImageEntry value2 = new ImageEntry(image);
-		_relicImageMap.TryAdd(relicId, value2);
-		return image;
-	}
+            var imageEntry = new ImageEntry(image);
+            _avatarImageMap.TryAdd(avatarId, imageEntry);
 
-	public void FreeAvatarImage(uint avatarId)
-	{
-		if (_avatarImageMap.TryGetValue(avatarId, out ImageEntry value))
-		{
-			value.RefCount--;
-			if (value.RefCount <= 0 && _avatarImageMap.TryRemove(avatarId, out ImageEntry value2))
-			{
-				value2.Image.Dispose();
-			}
-		}
-	}
+            return image;
+        }
 
-	public void FreeRelicImage(uint relicId)
-	{
-		if (_relicImageMap.TryGetValue(relicId, out ImageEntry value))
-		{
-			value.RefCount--;
-			if (value.RefCount <= 0 && _relicImageMap.TryRemove(relicId, out ImageEntry value2))
-			{
-				value2.Image.Dispose();
-			}
-		}
-	}
+        public async Task<Image?> GetRelicImage(uint relicId)
+        {
+            if (_relicImageMap.TryGetValue(relicId, out var entry))
+            {
+                entry.RefCount++; // Increment reference count
+                return entry.Image;
+            }
+
+            var relic = await dbContext.Relics.FindAsync(relicId);
+            if (relic == null)
+            {
+                return null;
+            }
+
+            var imageBase64 = relic.IconBase64;
+            var imageBytes = Convert.FromBase64String(imageBase64);
+            using var ms = new MemoryStream(imageBytes);
+            var image = Image.FromStream(ms);
+            image.RotateFlip(RotateFlipType.Rotate180FlipNone);
+            image.RotateFlip(RotateFlipType.RotateNoneFlipX);
+
+            var imageEntry = new ImageEntry(image);
+            _relicImageMap.TryAdd(relicId, imageEntry);
+
+            return image;
+        }
+
+        public void FreeAvatarImage(uint avatarId)
+        {
+            if (_avatarImageMap.TryGetValue(avatarId, out var entry))
+            {
+                entry.RefCount--; // Decrement reference count
+
+                if (entry.RefCount <= 0)
+                {
+                    // Remove and dispose the image when no more references exist
+                    if (_avatarImageMap.TryRemove(avatarId, out var removedEntry))
+                    {
+                        removedEntry.Image.Dispose();
+                    }
+                }
+            }
+
+        }
+
+        public void FreeRelicImage(uint relicId)
+        {
+            if (_relicImageMap.TryGetValue(relicId, out var entry))
+            {
+                entry.RefCount--; // Decrement reference count
+
+                if (entry.RefCount <= 0)
+                {
+                    // Remove and dispose the image when no more references exist
+                    if (_relicImageMap.TryRemove(relicId, out var removedEntry))
+                    {
+                        removedEntry.Image.Dispose();
+                    }
+                }
+            }
+        }
+
+    }
 }

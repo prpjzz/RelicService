@@ -1,20 +1,19 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: RelicService.Data.Config.EquipType
-// Assembly: RelicService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: EA9BEB7B-7841-4D0A-A232-DCAF9A27085B
-// Assembly location: RelicService.dll inside C:\Users\MBAINT\Downloads\win-x64\RelicService.exe)
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-#nullable disable
 namespace RelicService.Data.Config
 {
-  internal enum EquipType
-  {
-    EQUIP_NONE,
-    EQUIP_BRACER,
-    EQUIP_NECKLACE,
-    EQUIP_SHOES,
-    EQUIP_RING,
-    EQUIP_DRESS,
-    EQUIP_WEAPON,
-  }
+    internal enum EquipType
+    {
+        EQUIP_NONE = 0,
+        EQUIP_BRACER = 1, // 花
+        EQUIP_NECKLACE = 2, // 羽毛
+        EQUIP_SHOES = 3, // 沙漏
+        EQUIP_RING = 4, // 杯
+        EQUIP_DRESS = 5, // 头
+        EQUIP_WEAPON = 6
+    }
 }

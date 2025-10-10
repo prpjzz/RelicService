@@ -1,13 +1,21 @@
-namespace RelicService.Data.Event;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-internal enum EventId
+namespace RelicService.Data.Event
 {
-	EvtNone,
-	EvtUidChanged,
-	EvtSceneIdChanged,
-	EvtServiceStatusChanged,
-	EvtShutdown,
-	EvtFetchProgress,
-	EvtProfileRefresh,
-	EvtProfileConflict
+    internal enum EventId
+    {
+        EvtNone = 0,
+        EvtUidChanged = 1,
+        EvtSceneIdChanged = 2,
+        EvtServiceStatusChanged = 3,
+        EvtShutdown = 4,
+        EvtFetchProgress = 5,
+        EvtProfileRefresh = 6,
+        EvtProfileConflict = 7,
+    }
+
 }

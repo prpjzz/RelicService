@@ -1,6 +1,13 @@
-namespace RelicService.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-internal class VersionInfo
+namespace RelicService.Data
 {
-	public int Build { get; set; }
+    internal class VersionInfo
+    {
+        public int Build { get; set; }
+    }
 }

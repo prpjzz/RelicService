@@ -1,0 +1,456 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutMenuStrip" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="AboutFormTitle" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="AboutFormAPIText" xml:space="preserve">
+    <value>API文档</value>
+  </data>
+  <data name="UpdatePopupWindows" xml:space="preserve">
+    <value>提示</value>
+  </data>
+  <data name="UpdateText" xml:space="preserve">
+    <value>有新版本可用，是否前往下载？</value>
+  </data>
+  <data name="ExtraMenuStrip" xml:space="preserve">
+    <value>更多</value>
+  </data>
+  <data name="OpenCraftingMenuStrip" xml:space="preserve">
+    <value>打开合成台</value>
+  </data>
+  <data name="NotConnectStatusStrip" xml:space="preserve">
+    <value>服务离线</value>
+  </data>
+  <data name="ConnectStatusStrip" xml:space="preserve">
+    <value>服务在线</value>
+  </data>
+  <data name="StartupStatusText" xml:space="preserve">
+    <value>启动中...</value>
+  </data>
+  <data name="FetchingProgressText" xml:space="preserve">
+    <value>正在获取</value>
+  </data>
+  <data name="SaveSuccessText" xml:space="preserve">
+    <value>保存成功</value>
+  </data>
+  <data name="SuccessTitle" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="ErrorTitle" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="StatusOK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="StatusNone" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="VersionText" xml:space="preserve">
+    <value>版本</value>
+  </data>
+  <data name="NotGetCurrentTeamInfo" xml:space="preserve">
+    <value>未获取到当前队伍信息</value>
+  </data>
+  <data name="NotGetCurrentUserCharacterInfo" xml:space="preserve">
+    <value>未获取到当前用户人物信息</value>
+  </data>
+  <data name="FetchingCharacterEquipInfo" xml:space="preserve">
+    <value>正在获取人物装备信息</value>
+  </data>
+  <data name="RelicLevelText" xml:space="preserve">
+    <value>级</value>
+  </data>
+  <data name="PresetNameCannotBeEmpty" xml:space="preserve">
+    <value>预设名不能为空</value>
+  </data>
+  <data name="PresetNameAlreadyExists" xml:space="preserve">
+    <value>预设名已存在</value>
+  </data>
+  <data name="CannotCreatePresetWithoutRelics" xml:space="preserve">
+    <value>不能创建无圣遗物的预设</value>
+  </data>
+  <data name="SceneIdCannotBeEmpty" xml:space="preserve">
+    <value>场景ID不能为空</value>
+  </data>
+  <data name="SceneIdMustBeNumber" xml:space="preserve">
+    <value>场景ID必须为数字</value>
+  </data>
+  <data name="TeamMemberCountCannotExceed3" xml:space="preserve">
+    <value>队伍人数不能超过3人</value>
+  </data>
+  <data name="TeamMemberCountCannotBe0" xml:space="preserve">
+    <value>队伍人数不能为0</value>
+  </data>
+  <data name="TeamAlreadyExists" xml:space="preserve">
+    <value>队伍已存在</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>确定删除？</value>
+  </data>
+  <data name="DeleteConfig" xml:space="preserve">
+    <value>删除配置</value>
+  </data>
+  <data name="EditConfigTitle" xml:space="preserve">
+    <value>编辑配置</value>
+  </data>
+  <data name="MainFormTitle" xml:space="preserve">
+    <value>圣遗物预设系统 by: Ex_M</value>
+  </data>
+  <data name="MainPageText" xml:space="preserve">
+    <value>主页</value>
+  </data>
+  <data name="AddPresetText" xml:space="preserve">
+    <value>添加预设</value>
+  </data>
+  <data name="PresetCharacterListText" xml:space="preserve">
+    <value>预设角色列表</value>
+  </data>
+  <data name="ListFilterText" xml:space="preserve">
+    <value>列表过滤</value>
+  </data>
+  <data name="SceneText" xml:space="preserve">
+    <value>场景</value>
+  </data>
+  <data name="AutoEquipText" xml:space="preserve">
+    <value>自动装备</value>
+  </data>
+  <data name="ConfirmText" xml:space="preserve">
+    <value>确认</value>
+  </data>
+  <data name="EnableGameNotificationText" xml:space="preserve">
+    <value>启用游戏内通知</value>
+  </data>
+  <data name="RefreshMetadataText" xml:space="preserve">
+    <value>刷新元数据</value>
+  </data>
+  <data name="CharacterNamePlaceholder" xml:space="preserve">
+    <value>&lt;角色名&gt;</value>
+  </data>
+  <data name="ConflictText" xml:space="preserve">
+    <value>冲突</value>
+  </data>
+  <data name="CurrentTeamText" xml:space="preserve">
+    <value>当前队伍</value>
+  </data>
+  <data name="AllCharactersText" xml:space="preserve">
+    <value>所有人物</value>
+  </data>
+  <data name="RefreshTeamText" xml:space="preserve">
+    <value>刷新队伍</value>
+  </data>
+  <data name="RefreshListText" xml:space="preserve">
+    <value>刷新列表</value>
+  </data>
+  <data name="PresetSettingsText" xml:space="preserve">
+    <value>预设设置</value>
+  </data>
+  <data name="PresetNameText" xml:space="preserve">
+    <value>预设名</value>
+  </data>
+  <data name="AutoEquipOptionalText" xml:space="preserve">
+    <value>自动装备 [ 可选 ]</value>
+  </data>
+  <data name="EnableText" xml:space="preserve">
+    <value>启用</value>
+  </data>
+  <data name="ActivateBySceneText" xml:space="preserve">
+    <value>按场景激活</value>
+  </data>
+  <data name="SceneIdText" xml:space="preserve">
+    <value>场景ID</value>
+  </data>
+  <data name="SceneIdPlaceholder" xml:space="preserve">
+    <value>例: 3,1016,1056</value>
+  </data>
+  <data name="ActivateByTeamText" xml:space="preserve">
+    <value>按队伍激活</value>
+  </data>
+  <data name="TeammatesText" xml:space="preserve">
+    <value>队友</value>
+  </data>
+  <data name="CharacterSearchPlaceholder" xml:space="preserve">
+    <value>人物搜索</value>
+  </data>
+  <data name="UseCurrentTeamText" xml:space="preserve">
+    <value>使用当前队伍</value>
+  </data>
+  <data name="ClearSelectionText" xml:space="preserve">
+    <value>清空选择</value>
+  </data>
+  <data name="SaveText" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="StatusPlaceholder" xml:space="preserve">
+    <value>&lt;状态&gt;</value>
+  </data>
+  <data name="AddPresetFormTitle" xml:space="preserve">
+    <value>添加预设</value>
+  </data>
+  <data name="ConfigNameText" xml:space="preserve">
+    <value>配置名</value>
+  </data>
+  <data name="DeleteText" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="TeamText" xml:space="preserve">
+    <value>队伍</value>
+  </data>
+  <data name="AddTeamText" xml:space="preserve">
+    <value>添加队伍</value>
+  </data>
+  <data name="EditConfigPrefix" xml:space="preserve">
+    <value>编辑配置：</value>
+  </data>
+  <data name="CharacterText" xml:space="preserve">
+    <value>角色</value>
+  </data>
+  <data name="CharacterSelectionTitle" xml:space="preserve">
+    <value>角色选择</value>
+  </data>
+  <data name="PresetNamePlaceholder" xml:space="preserve">
+    <value>&lt;预设名&gt;</value>
+  </data>
+  <data name="EditText" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="EditTooltip" xml:space="preserve">
+    <value>更改设置或删除</value>
+  </data>
+  <data name="QuickEquipText" xml:space="preserve">
+    <value>快速装备</value>
+  </data>
+  <data name="QuickEquipTooltip" xml:space="preserve">
+    <value>装备到当前角色</value>
+  </data>
+  <data name="EquipToText" xml:space="preserve">
+    <value>装备到</value>
+  </data>
+  <data name="EquipToTooltip" xml:space="preserve">
+    <value>装备到其他角色</value>
+  </data>
+  <data name="EquipToCharacterMessage" xml:space="preserve">
+    <value>已为</value>
+  </data>
+  <data name="EquipText" xml:space="preserve">
+    <value>装备</value>
+  </data>
+  <data name="PresetText" xml:space="preserve">
+    <value>预设</value>
+  </data>
+  <data name="HPText" xml:space="preserve">
+    <value>生命值</value>
+  </data>
+  <data name="HPShortText" xml:space="preserve">
+    <value>生命</value>
+  </data>
+  <data name="AttackText" xml:space="preserve">
+    <value>攻击力</value>
+  </data>
+  <data name="AttackShortText" xml:space="preserve">
+    <value>攻击</value>
+  </data>
+  <data name="DefenseText" xml:space="preserve">
+    <value>防御力</value>
+  </data>
+  <data name="DefenseShortText" xml:space="preserve">
+    <value>防御</value>
+  </data>
+  <data name="CriticalRateText" xml:space="preserve">
+    <value>暴击率</value>
+  </data>
+  <data name="CriticalRateShortText" xml:space="preserve">
+    <value>暴击</value>
+  </data>
+  <data name="CriticalDamageText" xml:space="preserve">
+    <value>暴击伤害</value>
+  </data>
+  <data name="CriticalDamageShortText" xml:space="preserve">
+    <value>暴伤</value>
+  </data>
+  <data name="EnergyRechargeText" xml:space="preserve">
+    <value>元素充能效率</value>
+  </data>
+  <data name="EnergyRechargeShortText" xml:space="preserve">
+    <value>充能</value>
+  </data>
+  <data name="HealingBonusText" xml:space="preserve">
+    <value>治疗加成</value>
+  </data>
+  <data name="HealingBonusShortText" xml:space="preserve">
+    <value>治疗</value>
+  </data>
+  <data name="ElementalMasteryText" xml:space="preserve">
+    <value>元素精通</value>
+  </data>
+  <data name="ElementalMasteryShortText" xml:space="preserve">
+    <value>精通</value>
+  </data>
+  <data name="PhysicalDamageBonusText" xml:space="preserve">
+    <value>物理伤害加成</value>
+  </data>
+  <data name="PhysicalDamageBonusShortText" xml:space="preserve">
+    <value>物伤</value>
+  </data>
+  <data name="PyroDamageBonusText" xml:space="preserve">
+    <value>火元素伤害加成</value>
+  </data>
+  <data name="PyroDamageBonusShortText" xml:space="preserve">
+    <value>火伤</value>
+  </data>
+  <data name="ElectroDamageBonusText" xml:space="preserve">
+    <value>雷元素伤害加成</value>
+  </data>
+  <data name="ElectroDamageBonusShortText" xml:space="preserve">
+    <value>雷伤</value>
+  </data>
+  <data name="HydroDamageBonusText" xml:space="preserve">
+    <value>水元素伤害加成</value>
+  </data>
+  <data name="HydroDamageBonusShortText" xml:space="preserve">
+    <value>水伤</value>
+  </data>
+  <data name="DendroDamageBonusText" xml:space="preserve">
+    <value>草元素伤害加成</value>
+  </data>
+  <data name="DendroDamageBonusShortText" xml:space="preserve">
+    <value>草伤</value>
+  </data>
+  <data name="AnemoDamageBonusText" xml:space="preserve">
+    <value>风元素伤害加成</value>
+  </data>
+  <data name="AnemoDamageBonusShortText" xml:space="preserve">
+    <value>风伤</value>
+  </data>
+  <data name="GeoDamageBonusText" xml:space="preserve">
+    <value>岩元素伤害加成</value>
+  </data>
+  <data name="GeoDamageBonusShortText" xml:space="preserve">
+    <value>岩伤</value>
+  </data>
+  <data name="CryoDamageBonusText" xml:space="preserve">
+    <value>冰元素伤害加成</value>
+  </data>
+  <data name="CryoDamageBonusShortText" xml:space="preserve">
+    <value>冰伤</value>
+  </data>
+</root>
